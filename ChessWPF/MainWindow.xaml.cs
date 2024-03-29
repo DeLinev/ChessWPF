@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using ChessWPF.UserControls;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +20,12 @@ namespace ChessWPF
 		public MainWindow()
 		{
 			InitializeComponent();
+			this.contentControl.Content = new MenuUserControl();
+		}
+
+		private void FriendGameButton_Click(object sender, RoutedEventArgs e)
+		{
+			// Set the content of the content control to the game user control
 		}
 	}
 }

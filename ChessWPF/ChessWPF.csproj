@@ -8,4 +8,66 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\BlackBishop.png" />
+    <None Remove="Assets\BlackKing.png" />
+    <None Remove="Assets\BlackKnight.png" />
+    <None Remove="Assets\BlackPawn.png" />
+    <None Remove="Assets\BlackQueen.png" />
+    <None Remove="Assets\BlackRook.png" />
+    <None Remove="Assets\ChessBoard.png" />
+    <None Remove="Assets\ChessLogo.png" />
+    <None Remove="Assets\icon.png" />
+    <None Remove="Assets\WhiteBishop.png" />
+    <None Remove="Assets\WhiteKing.png" />
+    <None Remove="Assets\WhiteKnight.png" />
+    <None Remove="Assets\WhitePawn.png" />
+    <None Remove="Assets\WhiteQueen.png" />
+    <None Remove="Assets\WhiteRook.png" />
+    <None Remove="Fonts\LICENSE.txt" />
+    <None Remove="Fonts\Roboto-Black.ttf" />
+    <None Remove="Fonts\Roboto-BlackItalic.ttf" />
+    <None Remove="Fonts\Roboto-Bold.ttf" />
+    <None Remove="Fonts\Roboto-BoldItalic.ttf" />
+    <None Remove="Fonts\Roboto-Italic.ttf" />
+    <None Remove="Fonts\Roboto-Light.ttf" />
+    <None Remove="Fonts\Roboto-LightItalic.ttf" />
+    <None Remove="Fonts\Roboto-Medium.ttf" />
+    <None Remove="Fonts\Roboto-MediumItalic.ttf" />
+    <None Remove="Fonts\Roboto-Regular.ttf" />
+    <None Remove="Fonts\Roboto-Thin.ttf" />
+    <None Remove="Fonts\Roboto-ThinItalic.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\BlackBishop.png" />
+    <Resource Include="Assets\BlackKing.png" />
+    <Resource Include="Assets\BlackKnight.png" />
+    <Resource Include="Assets\BlackPawn.png" />
+    <Resource Include="Assets\BlackQueen.png" />
+    <Resource Include="Assets\BlackRook.png" />
+    <Resource Include="Assets\ChessBoard.png" />
+    <Resource Include="Assets\ChessLogo.png" />
+    <Resource Include="Assets\icon.png" />
+    <Resource Include="Assets\WhiteBishop.png" />
+    <Resource Include="Assets\WhiteKing.png" />
+    <Resource Include="Assets\WhiteKnight.png" />
+    <Resource Include="Assets\WhitePawn.png" />
+    <Resource Include="Assets\WhiteQueen.png" />
+    <Resource Include="Assets\WhiteRook.png" />
+    <Resource Include="Fonts\LICENSE.txt" />
+    <Resource Include="Fonts\Roboto-Black.ttf" />
+    <Resource Include="Fonts\Roboto-BlackItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Bold.ttf" />
+    <Resource Include="Fonts\Roboto-BoldItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Italic.ttf" />
+    <Resource Include="Fonts\Roboto-Light.ttf" />
+    <Resource Include="Fonts\Roboto-LightItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Medium.ttf" />
+    <Resource Include="Fonts\Roboto-MediumItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Regular.ttf" />
+    <Resource Include="Fonts\Roboto-Thin.ttf" />
+    <Resource Include="Fonts\Roboto-ThinItalic.ttf" />
+  </ItemGroup>
+
 </Project>
