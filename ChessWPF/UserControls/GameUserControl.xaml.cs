@@ -21,14 +21,14 @@ namespace ChessWPF.UserControls
 	/// </summary>
 	public partial class GameUserControl : UserControl
 	{
-		protected Image[,] ChessPieces;
+		//protected Image[,] ChessPieces;
 		protected Board board = new Board();
 
 		public GameUserControl()
 		{
 			InitializeComponent();
 			MoveSideTextBlock.Text = "White to move";
-			ChessPieces = new Image[8, 8];
+			//ChessPieces = new Image[8, 8];
 			board.SetBoard();
 			DrawPieces();
 		}

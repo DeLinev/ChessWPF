@@ -12,10 +12,7 @@ namespace ChessManagementClasses
 
 		protected PieceColor currentPlayer;
 
-		public PieceColor CurrentPlayer
-		{
-			get => currentPlayer;
-		}
+		public PieceColor CurrentPlayer { get => currentPlayer; }
 
 		public Board()
 		{
@@ -72,6 +69,22 @@ namespace ChessManagementClasses
 		{
 			return position.currentRank >= 0 && position.currentRank < 8 &&
 				position.currentFile >= 0 && position.currentFile < 8;
+		}
+
+		public List<MoveBase> GetPossibleMoves(Position position)
+		{
+			PieceBase piece = GetPiece(position);
+
+			if (piece == null)
+				return new List<MoveBase>();
+
+			return piece.GetPossibleMoves(this, position);
+		}
+
+		public void Move(MoveBase move)
+		{
+			move.MakeMove(this);
+			currentPlayer = currentPlayer == PieceColor.White ? PieceColor.Black : PieceColor.White;
 		}
 	}
 }

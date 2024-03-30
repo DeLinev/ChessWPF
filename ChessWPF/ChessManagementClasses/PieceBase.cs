@@ -17,5 +17,23 @@ namespace ChessManagementClasses
 		{
 			Color = color;
 		}
+
+		public abstract List<MoveBase> GetPossibleMoves(Board board, Position current);
+
+		protected virtual IEnumerable<Position> PossibleMovesInDirection(Board board, Position current, PositionChanges direction)
+		{
+			current = current.ChangePosition(direction);
+
+			while (Board.IsPositionValid(current) && board.IsPositionEmpty(current))
+			{
+				yield return new Position(current);
+				current = current.ChangePosition(direction);
+			}
+
+			if (Board.IsPositionValid(current) && board.GetPiece(current).Color != Color)
+				yield return new Position(current);
+
+			yield break;
+		}
 	}
 }
