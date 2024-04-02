@@ -13,7 +13,7 @@
     </UserControl.Resources>
     
     <Viewbox>
-        <Grid>
+        <Grid x:Name="GameGrid" MouseDown="GameGrid_MouseDown">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
@@ -28,11 +28,18 @@
 
             <Image Grid.Column="0" Grid.Row="1" Source="/Assets/ChessBoard.png" 
                 HorizontalAlignment="Left" VerticalAlignment="Top" Width="600"/>
+            
+            <UniformGrid x:Name="OverlayGrid" Rows="8" Columns="8" Grid.Column="0" 
+                         Grid.Row="1" >
+                <!--<Rectangle Fill="Red" Height="60" Width="60"></Rectangle>-->
+            </UniformGrid>
 
+                
+            
             <UniformGrid x:Name="BoardGrid" Rows="8" Columns="8" Grid.Column="0" Grid.Row="1"
-                         RenderOptions.BitmapScalingMode="HighQuality"/>
+                 RenderOptions.BitmapScalingMode="HighQuality"/>
 
-            <ListView Grid.Column="1" Grid.Row="1" 
+            <ListView x:Name="MovesList" Grid.Column="1" Grid.Row="1" 
                 FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
                 FontSize="40" Foreground="Black" Background="#FFE8E8FB" 
                 BorderThickness="0" Margin="15, 0, 0, 0" MaxHeight="580"

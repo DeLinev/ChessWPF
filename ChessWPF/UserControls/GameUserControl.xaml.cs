@@ -21,14 +21,18 @@ namespace ChessWPF.UserControls
 	/// </summary>
 	public partial class GameUserControl : UserControl
 	{
-		//protected Image[,] ChessPieces;
-		protected Board board = new Board();
+		protected Board board;
+		protected Shape[,] possibleMovesOverlay;
+		protected Position chosenPos;
+		protected List<MoveBase> possibleMoves;
 
 		public GameUserControl()
 		{
 			InitializeComponent();
 			MoveSideTextBlock.Text = "White to move";
-			//ChessPieces = new Image[8, 8];
+			board = new Board();
+			possibleMovesOverlay = new Shape[8, 8];
+			possibleMoves = new List<MoveBase>();
 			board.SetBoard();
 			DrawPieces();
 		}
@@ -136,8 +140,93 @@ namespace ChessWPF.UserControls
 					img.Source = bitmapImage;
 					img.Width = 60;
 					BoardGrid.Children.Add(img);
+
+					Ellipse ellipse = new();
+					possibleMovesOverlay[i, j] = ellipse;
+					//OverlayGrid.Children.Add(ellipse);
 				}
 			}
+		}
+
+		private void GameGrid_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			Grid grid = (Grid)sender;
+
+			Point mousePosition = e.GetPosition(grid);
+
+			if (mousePosition.X > BoardGrid.ActualWidth || mousePosition.Y < MoveSideTextBlock.ActualHeight)
+				return;
+
+			// Calculate the cell that was clicked
+			double cellHeight = BoardGrid.ActualHeight / 8;
+			double cellWidth = BoardGrid.ActualWidth / 8;
+			double actualYOfClick = mousePosition.Y - MoveSideTextBlock.ActualHeight;
+			double actualXOfClick = mousePosition.X;
+			int rank = (int)(actualYOfClick / cellHeight);
+			int file = (int)(actualXOfClick / cellWidth);
+
+			if (possibleMoves.Count == 0)
+				possibleMoves = board.GetPossibleMoves(new Position(rank, file));
+
+			if (chosenPos != null)
+			{
+				possibleMovesOverlay[chosenPos.currentRank, chosenPos.currentFile].Fill = Brushes.Transparent;
+				chosenPos = null;
+
+				foreach (var move in possibleMoves)
+				{
+					possibleMovesOverlay[move.EndPosition.currentRank, move.EndPosition.currentFile].Fill = Brushes.Transparent;
+
+					if (move.EndPosition.currentRank == rank && move.EndPosition.currentFile == file)
+					{
+						board.Move(move);
+						BoardGrid.Children.Clear();
+						DrawPieces();
+						MoveSideTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "White to move" : "Black to move";
+						break;
+					}
+				}
+
+				OverlayGrid.Children.Clear();
+				possibleMoves.Clear();
+
+            }
+			else
+			{
+				if (board.GetPiece(new Position(rank, file)) != null && board.CurrentPlayer != board.GetPiece(new Position(rank, file)).Color)
+				{
+					possibleMoves.Clear();
+					return;
+				}
+
+				if (possibleMoves.Count > 0)
+				{
+					chosenPos = new Position(rank, file);
+					
+					Color col = Color.FromRgb(153, 145, 236);
+
+					foreach (var move in possibleMoves)
+					{
+						possibleMovesOverlay[move.EndPosition.currentRank, move.EndPosition.currentFile].Fill = new SolidColorBrush(col);
+						possibleMovesOverlay[move.EndPosition.currentRank, move.EndPosition.currentFile].Height = 20;
+						possibleMovesOverlay[move.EndPosition.currentRank, move.EndPosition.currentFile].Width = 20;
+					}
+
+					possibleMovesOverlay[rank, file] = new Rectangle();
+					possibleMovesOverlay[rank, file].Fill = new SolidColorBrush(col);
+
+					AddToOverlayGrid();
+				}
+			}
+		}
+
+		protected void AddToOverlayGrid()
+		{
+			OverlayGrid.Children.Clear();
+
+			for (int i = 0; i < 8; i++)
+				for (int j = 0; j < 8; j++)
+					OverlayGrid.Children.Add(possibleMovesOverlay[i, j]);
 		}
 	}
 }
