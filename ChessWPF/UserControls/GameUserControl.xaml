@@ -24,7 +24,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock x:Name="MoveSideTextBlock"></TextBlock>
+            <TextBlock x:Name="StatusTextBlock"></TextBlock>
 
             <Image Grid.Column="0" Grid.Row="1" Source="/Assets/ChessBoard.png" 
                 HorizontalAlignment="Left" VerticalAlignment="Top" Width="600"/>

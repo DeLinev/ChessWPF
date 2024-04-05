@@ -19,5 +19,16 @@ namespace ChessManagementClasses
 		}
 
 		public abstract void MakeMove(Board board);
+
+		public abstract void ReverseMove(Board board);
+
+		public virtual bool IsValid(Board board)
+		{
+			MakeMove(board);
+			bool result = !board.IsCheck();
+			ReverseMove(board);
+
+			return result;
+		}
 	}
 }

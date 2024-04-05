@@ -13,8 +13,9 @@ namespace ChessManagementClasses
 		protected PieceColor currentPlayer;
 
 		public PieceColor CurrentPlayer { get => currentPlayer; }
+		public GameOver GameOver { get; set; }
 
-		public Board()
+		public Board() 
 		{
 			SetBoard();
 			currentPlayer = PieceColor.White;
@@ -75,16 +76,69 @@ namespace ChessManagementClasses
 		{
 			PieceBase piece = GetPiece(position);
 
-			if (piece == null)
+			if (piece == null || piece.Color != CurrentPlayer)
 				return new List<MoveBase>();
 
-			return piece.GetPossibleMoves(this, position);
+			List<MoveBase> possibleMoves = piece.GetPossibleMoves(this, position);
+
+			return (
+				from move in possibleMoves
+				where move.IsValid(this)
+				select move
+			).ToList();
 		}
 
 		public void Move(MoveBase move)
 		{
 			move.MakeMove(this);
+			PieceColor opponent = currentPlayer;
 			currentPlayer = currentPlayer == PieceColor.White ? PieceColor.Black : PieceColor.White;
+
+			if (isStalemate())
+			{
+				if (IsCheck())
+					GameOver = new GameOver(opponent, PossibleEndings.CheckMate);
+				else
+					GameOver = new GameOver(null, PossibleEndings.StaleMate);
+			}
+		}
+
+		public bool IsCheck()
+		{
+			for (int i = 0; i < 8; i++)
+			{
+				for (int j = 0; j < 8; j++)
+				{
+					if (pieces[i, j] != null && pieces[i, j].Color != currentPlayer)
+					{
+						if (pieces[i, j].IsThreatToKing(this, new Position(i, j)))
+							return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public bool isStalemate()
+		{
+			List<MoveBase> moves = new List<MoveBase>();
+
+			for (int i = 0; i < 8; i++)
+			{
+				for (int j = 0; j < 8; j++)
+				{
+					if (pieces[i, j] != null && pieces[i, j].Color == currentPlayer)
+					{
+						GetPossibleMoves(new Position(i, j)).ForEach(moves.Add);
+					}
+				}
+			}
+
+			if (moves.Count == 0)
+				return true;
+
+			return false;
 		}
 	}
 }

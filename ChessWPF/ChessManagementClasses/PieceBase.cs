@@ -9,9 +9,21 @@ namespace ChessManagementClasses
 {
 	public abstract class PieceBase
 	{
+		protected bool previeousHasMoved;
+		protected bool hasMoved = false;
+
 		public abstract ChessPieceType Type { get; }
 		public PieceColor Color { get; }
-		public bool HasMoved { get; set; } = false;
+		public bool HasMoved
+		{
+			get => hasMoved;
+			set
+			{
+				previeousHasMoved = hasMoved;
+				hasMoved = value;
+			}
+		}
+		public bool PreviousHasMoved { get => previeousHasMoved; }
 
 		public PieceBase(PieceColor color)
 		{
@@ -19,6 +31,19 @@ namespace ChessManagementClasses
 		}
 
 		public abstract List<MoveBase> GetPossibleMoves(Board board, Position current);
+
+		public virtual bool IsThreatToKing(Board board, Position current)
+		{
+			List<MoveBase> moves = GetPossibleMoves(board, current);
+
+			foreach (MoveBase move in moves)
+			{
+				if (board.GetPiece(move.EndPosition) != null && board.GetPiece(move.EndPosition).Type == ChessPieceType.King)
+					return true;
+			}
+
+			return false;
+		}
 
 		protected virtual IEnumerable<Position> PossibleMovesInDirection(Board board, Position current, PositionChanges direction)
 		{

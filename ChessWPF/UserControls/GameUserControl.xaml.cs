@@ -29,7 +29,7 @@ namespace ChessWPF.UserControls
 		public GameUserControl()
 		{
 			InitializeComponent();
-			MoveSideTextBlock.Text = "White to move";
+			StatusTextBlock.Text = "White to move";
 			board = new Board();
 			possibleMovesOverlay = new Shape[8, 8];
 			possibleMoves = new List<MoveBase>();
@@ -154,13 +154,13 @@ namespace ChessWPF.UserControls
 
 			Point mousePosition = e.GetPosition(grid);
 
-			if (mousePosition.X > BoardGrid.ActualWidth || mousePosition.Y < MoveSideTextBlock.ActualHeight)
+			if (mousePosition.X > BoardGrid.ActualWidth || mousePosition.Y < StatusTextBlock.ActualHeight)
 				return;
 
 			// Calculate the cell that was clicked
 			double cellHeight = BoardGrid.ActualHeight / 8;
 			double cellWidth = BoardGrid.ActualWidth / 8;
-			double actualYOfClick = mousePosition.Y - MoveSideTextBlock.ActualHeight;
+			double actualYOfClick = mousePosition.Y - StatusTextBlock.ActualHeight;
 			double actualXOfClick = mousePosition.X;
 			int rank = (int)(actualYOfClick / cellHeight);
 			int file = (int)(actualXOfClick / cellWidth);
@@ -182,7 +182,19 @@ namespace ChessWPF.UserControls
 						board.Move(move);
 						BoardGrid.Children.Clear();
 						DrawPieces();
-						MoveSideTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "White to move" : "Black to move";
+						StatusTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "White to move" : "Black to move";
+
+						if (board.GameOver != null)
+						{
+							string winner = board.GameOver.Winner == PieceColor.White ? "White" : "Black";
+							string ending = board.GameOver.Ending == PossibleEndings.CheckMate ? "Checkmate" : "Stalemate";
+
+							if (board.GameOver.Winner == null)
+								StatusTextBlock.Text = "Draw by " + ending;
+							else
+								StatusTextBlock.Text = winner + " wins by " + ending;
+						}
+
 						break;
 					}
 				}
@@ -193,12 +205,6 @@ namespace ChessWPF.UserControls
             }
 			else
 			{
-				if (board.GetPiece(new Position(rank, file)) != null && board.CurrentPlayer != board.GetPiece(new Position(rank, file)).Color)
-				{
-					possibleMoves.Clear();
-					return;
-				}
-
 				if (possibleMoves.Count > 0)
 				{
 					chosenPos = new Position(rank, file);
