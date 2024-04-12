@@ -25,9 +25,17 @@ namespace ChessWPF
 
 		private void FriendGameButton_Click(object sender, RoutedEventArgs e)
 		{
-			this.contentControl.Content = new GameUserControl();
+			this.contentControl.Content = new GameUserControl(MainMenuButton);
 			FriendGameButton.Visibility = Visibility.Hidden;
 			ComputerGameButton.Visibility = Visibility.Hidden;
+		}
+
+		private void MainMenuButton_Click(object sender, RoutedEventArgs e)
+		{
+			this.contentControl.Content = new MenuUserControl();
+			FriendGameButton.Visibility = Visibility.Visible;
+			ComputerGameButton.Visibility = Visibility.Visible;
+			MainMenuButton.Visibility = Visibility.Hidden;
 		}
 	}
 }

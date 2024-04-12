@@ -28,16 +28,15 @@
 
             <Image Grid.Column="0" Grid.Row="1" Source="/Assets/ChessBoard.png" 
                 HorizontalAlignment="Left" VerticalAlignment="Top" Width="600"/>
-            
+
             <UniformGrid x:Name="OverlayGrid" Rows="8" Columns="8" Grid.Column="0" 
                          Grid.Row="1" >
-                <!--<Rectangle Fill="Red" Height="60" Width="60"></Rectangle>-->
             </UniformGrid>
 
-                
-            
             <UniformGrid x:Name="BoardGrid" Rows="8" Columns="8" Grid.Column="0" Grid.Row="1"
                  RenderOptions.BitmapScalingMode="HighQuality"/>
+
+            <ContentControl x:Name="GameEndMenu" Grid.Column="0" Grid.Row="1" />
 
             <ListView x:Name="MovesList" Grid.Column="1" Grid.Row="1" 
                 FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 

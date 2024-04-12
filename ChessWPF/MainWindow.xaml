@@ -35,6 +35,22 @@
                 Content="Грати з другом" Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" Foreground="#FF080808" Click="FriendGameButton_Click" />
             <Button x:Name="ComputerGameButton" Style="{StaticResource MenuButtonStyle}" Grid.Column="2" Grid.Row="3" 
                 Content="Грати з комп'ютером" Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" />
+
+            <Grid Grid.ColumnSpan="5" Grid.RowSpan="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="600"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Button x:Name="MainMenuButton" Style="{StaticResource MenuButtonStyle}" Content="Головне меню" HorizontalAlignment="Center"
+                    Grid.Column="0" Grid.Row="1" Width="240" Margin="0, 220, 0, 0" Padding="20" FontSize="20" Background="#9991ec" VerticalAlignment="Center" 
+                        Visibility="Hidden" Click="MainMenuButton_Click" />
+            </Grid>
         </Grid>
     </Viewbox>
 </Window>

@@ -18,6 +18,8 @@
     <None Remove="Assets\ChessBoard.png" />
     <None Remove="Assets\ChessLogo.png" />
     <None Remove="Assets\icon.png" />
+    <None Remove="Assets\SFX\MoveSound.mp3" />
+    <None Remove="Assets\SFX\MoveSound.wav" />
     <None Remove="Assets\WhiteBishop.png" />
     <None Remove="Assets\WhiteKing.png" />
     <None Remove="Assets\WhiteKnight.png" />
@@ -68,6 +70,10 @@
     <Resource Include="Fonts\Roboto-Regular.ttf" />
     <Resource Include="Fonts\Roboto-Thin.ttf" />
     <Resource Include="Fonts\Roboto-ThinItalic.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\SFX\" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,23 +22,29 @@ namespace ChessWPF.UserControls
 	/// </summary>
 	public partial class GameUserControl : UserControl
 	{
+		protected Button mainMenuButton;
 		protected Board board;
 		protected Shape[,] possibleMovesOverlay;
 		protected Position chosenPos;
+		protected MediaPlayer mediaPlayer;
 		protected List<MoveBase> possibleMoves;
 
-		public GameUserControl()
+		public Board Board { get => board; }
+
+		public GameUserControl(Button btn)
 		{
 			InitializeComponent();
-			StatusTextBlock.Text = "White to move";
+			StatusTextBlock.Text = "Хід білих";
 			board = new Board();
 			possibleMovesOverlay = new Shape[8, 8];
 			possibleMoves = new List<MoveBase>();
 			board.SetBoard();
 			DrawPieces();
+			mainMenuButton = btn;
+			mediaPlayer = new MediaPlayer();
 		}
 
-		protected void DrawPieces()
+		public void DrawPieces()
 		{
 			for (int i = 0; i < 8; i++)
 			{
@@ -182,17 +189,23 @@ namespace ChessWPF.UserControls
 						board.Move(move);
 						BoardGrid.Children.Clear();
 						DrawPieces();
-						StatusTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "White to move" : "Black to move";
+						StatusTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "Хід білих" : "Хід чорних";
+						mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
+						mediaPlayer.Play();
 
 						if (board.GameOver != null)
 						{
-							string winner = board.GameOver.Winner == PieceColor.White ? "White" : "Black";
-							string ending = board.GameOver.Ending == PossibleEndings.CheckMate ? "Checkmate" : "Stalemate";
+							string winner = board.GameOver.Winner == PieceColor.White ? "Білі" : "Чорні";
+							string ending = board.GameOver.Ending == PossibleEndings.CheckMate ? "Мат" : "Пат";
 
 							if (board.GameOver.Winner == null)
-								StatusTextBlock.Text = "Draw by " + ending;
+								StatusTextBlock.Text = "Нічия через " + ending;
 							else
-								StatusTextBlock.Text = winner + " wins by " + ending;
+								StatusTextBlock.Text = winner + " перемогли через " + ending;
+
+							GameEndUserControl gameEndMenu = new GameEndUserControl(this);
+							GameEndMenu.Content = gameEndMenu;
+							mainMenuButton.Visibility = Visibility.Visible;
 						}
 
 						break;
@@ -233,6 +246,16 @@ namespace ChessWPF.UserControls
 			for (int i = 0; i < 8; i++)
 				for (int j = 0; j < 8; j++)
 					OverlayGrid.Children.Add(possibleMovesOverlay[i, j]);
+		}
+
+		public void ResetGame()
+		{
+			board = new Board();
+			BoardGrid.Children.Clear();
+			DrawPieces();
+			StatusTextBlock.Text = "Хід білих";
+			GameEndMenu.Content = null;
+			mainMenuButton.Visibility = Visibility.Hidden;
 		}
 	}
 }
