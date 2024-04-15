@@ -22,6 +22,7 @@ namespace ChessWPF.UserControls
 	/// </summary>
 	public partial class GameUserControl : UserControl
 	{
+		protected int movesCount = 1;
 		protected Button mainMenuButton;
 		protected Board board;
 		protected Shape[,] possibleMovesOverlay;
@@ -44,108 +45,16 @@ namespace ChessWPF.UserControls
 			mediaPlayer = new MediaPlayer();
 		}
 
-		public void DrawPieces()
+		protected void DrawPieces()
 		{
 			for (int i = 0; i < 8; i++)
 			{
 				for (int j = 0; j < 8; j++)
 				{
 					Image img = new();
-					BitmapImage bitmapImage = new();
-
-					switch (board.GetPiece(new Position(i, j)))
-					{
-						case Pawn p:
-							if (p.Color == PieceColor.White)
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/WhitePawn.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							else
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/BlackPawn.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							break;
-						case Rook r:
-							if (r.Color == PieceColor.White)
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/WhiteRook.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							else
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/BlackRook.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							break;
-						case Knight k:
-							if (k.Color == PieceColor.White)
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/WhiteKnight.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							else
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/BlackKnight.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							break;
-						case Bishop b:
-							if (b.Color == PieceColor.White)
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/WhiteBishop.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							else
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/BlackBishop.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							break;
-						case Queen q:
-							if (q.Color == PieceColor.White)
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/WhiteQueen.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							else
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/BlackQueen.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							break;
-						case King k:
-							if (k.Color == PieceColor.White)
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/WhiteKing.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							else
-							{
-								bitmapImage.BeginInit();
-								bitmapImage.UriSource = new Uri("/Assets/BlackKing.png", UriKind.Relative);
-								bitmapImage.EndInit();
-							}
-							break;
-						default:
-							img.Source = null;
-							break;
-					}
-
-					img.Source = bitmapImage;
+					img.Source = GetImageSource(board.GetPiece(new Position(i, j)));
 					img.Width = 60;
+
 					BoardGrid.Children.Add(img);
 
 					Ellipse ellipse = new();
@@ -177,22 +86,26 @@ namespace ChessWPF.UserControls
 
 			if (chosenPos != null)
 			{
-				possibleMovesOverlay[chosenPos.currentRank, chosenPos.currentFile].Fill = Brushes.Transparent;
-				chosenPos = null;
-
 				foreach (var move in possibleMoves)
 				{
 					possibleMovesOverlay[move.EndPosition.currentRank, move.EndPosition.currentFile].Fill = Brushes.Transparent;
 
 					if (move.EndPosition.currentRank == rank && move.EndPosition.currentFile == file)
 					{
+						// Make the move
 						board.Move(move);
 						BoardGrid.Children.Clear();
 						DrawPieces();
 						StatusTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "Хід білих" : "Хід чорних";
+
+						// Add move to the MovesList
+						MoveToList(move);
+
+						// Play sound
 						mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
 						mediaPlayer.Play();
 
+						// Check if the game is over
 						if (board.GameOver != null)
 						{
 							string winner = board.GameOver.Winner == PieceColor.White ? "Білі" : "Чорні";
@@ -212,16 +125,19 @@ namespace ChessWPF.UserControls
 					}
 				}
 
+				possibleMovesOverlay[chosenPos.currentRank, chosenPos.currentFile].Fill = Brushes.Transparent;
+				chosenPos = null;
+
 				OverlayGrid.Children.Clear();
 				possibleMoves.Clear();
 
-            }
+			}
 			else
 			{
 				if (possibleMoves.Count > 0)
 				{
 					chosenPos = new Position(rank, file);
-					
+
 					Color col = Color.FromRgb(153, 145, 236);
 
 					foreach (var move in possibleMoves)
@@ -256,6 +172,163 @@ namespace ChessWPF.UserControls
 			StatusTextBlock.Text = "Хід білих";
 			GameEndMenu.Content = null;
 			mainMenuButton.Visibility = Visibility.Hidden;
+			movesCount = 1;
+			MovesList.Items.Clear();
+		}
+
+		protected void MoveToList(MoveBase move)
+		{
+			PieceBase piece = board.GetPiece(move.EndPosition);
+			StackPanel stackPanel = new StackPanel();
+			TextBlock moveNumber = new TextBlock();
+			Image img = new Image();
+			TextBlock moveText = new TextBlock();
+
+			stackPanel.Orientation = Orientation.Horizontal;
+
+			moveNumber.VerticalAlignment = VerticalAlignment.Bottom;
+			moveNumber.FontFamily = new FontFamily("/Fonts/Roboto-Light.ttf #Roboto");
+			moveNumber.FontSize = 25;
+
+			if (piece.Color == PieceColor.White)
+			{
+				moveNumber.Text = movesCount + ".";
+				movesCount++;
+				stackPanel.Children.Add(moveNumber);
+
+				if (piece is Pawn)
+					moveNumber.Margin = new Thickness(0, 0, 5, 0);
+			}
+
+			if (!(piece is Pawn))
+			{
+				img.Width = 40;
+				img.Source = GetImageSource(piece);
+			}
+
+			moveText.VerticalAlignment = VerticalAlignment.Center;
+
+			if (move is RegularMove && (move as RegularMove).IsCapture)
+			{
+				if (piece is Pawn)
+				{
+					moveText.Text = move.StartPosition.GetFileLetter();
+					moveNumber.Margin = new Thickness(0, 0, 5, 0);
+				}
+
+				moveText.Text += "x";
+			}
+
+			moveText.Text += move.EndPosition.ToString();
+
+			if (board.GameOver != null)
+				moveText.Text += "#";
+			else if (piece.IsThreatToKing(board, move.EndPosition))
+				moveText.Text += "+";
+
+			stackPanel.Children.Add(img);
+			stackPanel.Children.Add(moveText);
+
+			MovesList.Items.Add(stackPanel);
+			MovesList.ScrollIntoView(stackPanel);
+		}
+
+		protected BitmapImage GetImageSource(PieceBase piece)
+		{
+			BitmapImage bitmapImage = new BitmapImage();
+
+			switch (piece)
+			{
+				case Pawn p:
+					if (p.Color == PieceColor.White)
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/WhitePawn.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					else
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/BlackPawn.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					break;
+				case Rook r:
+					if (r.Color == PieceColor.White)
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/WhiteRook.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					else
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/BlackRook.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					break;
+				case Knight k:
+					if (k.Color == PieceColor.White)
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/WhiteKnight.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					else
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/BlackKnight.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					break;
+				case Bishop b:
+					if (b.Color == PieceColor.White)
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/WhiteBishop.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					else
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/BlackBishop.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					break;
+				case Queen q:
+					if (q.Color == PieceColor.White)
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/WhiteQueen.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					else
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/BlackQueen.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					break;
+				case King k:
+					if (k.Color == PieceColor.White)
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/WhiteKing.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					else
+					{
+						bitmapImage.BeginInit();
+						bitmapImage.UriSource = new Uri("/Assets/BlackKing.png", UriKind.Relative);
+						bitmapImage.EndInit();
+					}
+					break;
+				default:
+					bitmapImage = null;
+					break;
+			}
+
+			return bitmapImage;
 		}
 	}
 }

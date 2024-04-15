@@ -5,17 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ChessWPF.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="520" d:DesignWidth="800" Background="#FFE8E8FB">
+             d:DesignHeight="520" d:DesignWidth="820" Background="#FFE8E8FB">
     <UserControl.Resources>
         <Style x:Key="NoHeader" TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Visibility" Value="Collapsed" />
         </Style>
     </UserControl.Resources>
-    
+
     <Viewbox>
         <Grid x:Name="GameGrid" MouseDown="GameGrid_MouseDown">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -38,48 +39,20 @@
 
             <ContentControl x:Name="GameEndMenu" Grid.Column="0" Grid.Row="1" />
 
-            <ListView x:Name="MovesList" Grid.Column="1" Grid.Row="1" 
+            <ListView x:Name="MovesList" Grid.Column="1" Grid.Row="1" Width="300"
                 FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
-                FontSize="40" Foreground="Black" Background="#FFE8E8FB" 
-                BorderThickness="0" Margin="15, 0, 0, 0" MaxHeight="580"
-                >
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
-                <ListViewItem></ListViewItem>
+                FontSize="27" Foreground="Black" Background="#FFE8E8FB" 
+                BorderThickness="0" Margin="15, 0, 0, 0" MaxHeight="580" >
 
-                <ListView.View>
-                    <GridView x:Name="MovesGridView" AllowsColumnReorder="False" ColumnHeaderContainerStyle="{StaticResource NoHeader}">
-                        <GridViewColumn  Width="150">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="/Assets/WhiteKnight.png" Width="60"/>
-                                        <TextBlock Text="xc3" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ListViewStyle}"></Style>
+                </ListView.Resources>
 
-                        <GridViewColumn Width="150">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="/Assets/BlackPawn.png" Width="60"/>
-                                        <TextBlock Text="xc3" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel MaxWidth="280" HorizontalAlignment="Left" ItemWidth="140" ItemHeight="40"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
             </ListView>
         </Grid>
     </Viewbox>

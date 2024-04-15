@@ -47,5 +47,19 @@ namespace ChessManagementClasses
 					throw new ArgumentException("Invalid position change");
 			}
 		}
+
+		public override string ToString()
+		{
+			char[] files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+			return (8 - currentRank).ToString() + files[currentFile];
+		}
+
+		public string GetFileLetter()
+		{
+			char[] files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+			return files[currentFile].ToString();
+		}
 	}
 }

@@ -28,8 +28,9 @@ namespace ChessManagementClasses
 					moves.Add(new RegularMove(new Position(position), new Position(current)));
 
 				// Adds possible move for the Upx2 direction
+				Position oneUp = position.ChangePosition(PositionChanges.Up);
 				current = position.ChangePosition(PositionChanges.Up, 2);
-				if (Board.IsPositionValid(current) && board.IsPositionEmpty(current) && !this.HasMoved)
+				if (Board.IsPositionValid(current) && board.IsPositionEmpty([current, oneUp]) && !this.HasMoved)
 					moves.Add(new RegularMove(new Position(position), new Position(current)));
 
 				// Adds possible move for the UpLeft direction
@@ -50,8 +51,9 @@ namespace ChessManagementClasses
 					moves.Add(new RegularMove(new Position(position), new Position(current)));
 
 				// Adds possible move for the Downx2 direction
+				Position oneDown = position.ChangePosition(PositionChanges.Down);
 				current = position.ChangePosition(PositionChanges.Down, 2);
-				if (Board.IsPositionValid(current) && board.IsPositionEmpty(current) && !this.HasMoved)
+				if (Board.IsPositionValid(current) && board.IsPositionEmpty([current, oneDown]) && !this.HasMoved)
 					moves.Add(new RegularMove(new Position(position), new Position(current)));
 
 				// Adds possible move for the DownLeft direction

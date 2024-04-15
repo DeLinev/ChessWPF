@@ -66,6 +66,15 @@ namespace ChessManagementClasses
 			return GetPiece(position) == null;
 		}
 
+		public bool IsPositionEmpty(Position[] positions)
+		{
+			foreach (Position position in positions)
+				if (!IsPositionEmpty(position))
+					return false;
+
+			return true;
+		}
+
 		public static bool IsPositionValid(Position position)
 		{
 			return position.currentRank >= 0 && position.currentRank < 8 &&
