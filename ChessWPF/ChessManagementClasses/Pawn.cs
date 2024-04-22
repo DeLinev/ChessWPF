@@ -25,7 +25,7 @@ namespace ChessManagementClasses
 				// Adds possible move for the Up direction
 				current = position.ChangePosition(PositionChanges.Up);
 				if (Board.IsPositionValid(current) && board.IsPositionEmpty(current))
-					moves.Add(new RegularMove(new Position(position), new Position(current)));
+					SelectMove(position, current, moves);
 
 				// Adds possible move for the Upx2 direction
 				Position oneUp = position.ChangePosition(PositionChanges.Up);
@@ -33,22 +33,20 @@ namespace ChessManagementClasses
 				if (Board.IsPositionValid(current) && board.IsPositionEmpty([current, oneUp]) && !this.HasMoved)
 					moves.Add(new RegularMove(new Position(position), new Position(current)));
 
-				// Adds possible move for the UpLeft direction
-				current = position.ChangePosition(PositionChanges.UpLeft);
-				if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
-					moves.Add(new RegularMove(new Position(position), new Position(current)));
-
-				// Adds possible move for the UpRight direction
-				current = position.ChangePosition(PositionChanges.UpRight);
-				if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
-					moves.Add(new RegularMove(new Position(position), new Position(current)));
+				// Adds possible moves for diagonals direction
+				foreach (PositionChanges direction in new PositionChanges[] { PositionChanges.UpLeft, PositionChanges.UpRight })
+				{
+					current = position.ChangePosition(direction);
+					if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
+						SelectMove(position, current, moves);
+				}
 			}
 			else // Black pawns
 			{
 				// Adds possible move for the Down direction
 				current = position.ChangePosition(PositionChanges.Down);
 				if (Board.IsPositionValid(current) && board.IsPositionEmpty(current))
-					moves.Add(new RegularMove(new Position(position), new Position(current)));
+					SelectMove(position, current, moves);
 
 				// Adds possible move for the Downx2 direction
 				Position oneDown = position.ChangePosition(PositionChanges.Down);
@@ -56,18 +54,30 @@ namespace ChessManagementClasses
 				if (Board.IsPositionValid(current) && board.IsPositionEmpty([current, oneDown]) && !this.HasMoved)
 					moves.Add(new RegularMove(new Position(position), new Position(current)));
 
-				// Adds possible move for the DownLeft direction
-				current = position.ChangePosition(PositionChanges.DownLeft);
-				if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
-					moves.Add(new RegularMove(new Position(position), new Position(current)));
-
-				// Adds possible move for the DownRight direction
-				current = position.ChangePosition(PositionChanges.DownRight);
-				if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
-					moves.Add(new RegularMove(new Position(position), new Position(current)));
+				// Adds possible moves for diagonals direction
+				foreach (PositionChanges direction in new PositionChanges[] { PositionChanges.DownLeft, PositionChanges.DownRight })
+				{
+					current = position.ChangePosition(direction);
+					if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
+						SelectMove(position, current, moves);
+				}
 			}
 
 			return moves;
+		}
+
+		protected void SelectMove(Position position, Position current, List<MoveBase> moves)
+		{
+			if (Color == PieceColor.White ? current.currentRank == 0 : current.currentRank == 7) // Promotion
+			{
+				//foreach (MoveBase move in PossiblePromotions(position, current))
+				//	moves.Add(move);
+				moves.Add(new PromotionMove(new Position(position), new Position(current)));
+			}
+			else
+			{
+				moves.Add(new RegularMove(new Position(position), new Position(current)));
+			}
 		}
 	}
 }

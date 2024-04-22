@@ -70,7 +70,7 @@ namespace ChessWPF.UserControls
 
 			Point mousePosition = e.GetPosition(grid);
 
-			if (mousePosition.X > BoardGrid.ActualWidth || mousePosition.Y < StatusTextBlock.ActualHeight)
+			if (mousePosition.X > BoardGrid.ActualWidth || mousePosition.Y < StatusTextBlock.ActualHeight || OverlayMenu.Content != null)
 				return;
 
 			// Calculate the cell that was clicked
@@ -92,14 +92,29 @@ namespace ChessWPF.UserControls
 
 					if (move.EndPosition.currentRank == rank && move.EndPosition.currentFile == file)
 					{
-						// Make the move
-						board.Move(move);
-						BoardGrid.Children.Clear();
-						DrawPieces();
-						StatusTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "Хід білих" : "Хід чорних";
+						if (move is PromotionMove)
+						{
+							//board.SetPiece(move.EndPosition, new Pawn(board.CurrentPlayer));
+							//board.SetPiece(move.StartPosition, null);
+							RegularMove regMove = new RegularMove(move.StartPosition, move.EndPosition);
+							regMove.MakeMove(board);
+							BoardGrid.Children.Clear(); // ???
+							DrawPieces();
+							regMove.ReverseMove(board);
+
+							// Open promotion menu if the move is a promotion
+							PromotionMenuUserControl promotionMenu = new PromotionMenuUserControl(this, move as PromotionMove);
+							OverlayMenu.Content = promotionMenu;
+						}
+						else
+						{
+							// Make the move if it is a regular move
+							ManageMove(move);
+							MoveToList(move);
+						}
 
 						// Add move to the MovesList
-						MoveToList(move);
+						//MoveToList(move);
 
 						// Play sound
 						mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
@@ -117,7 +132,7 @@ namespace ChessWPF.UserControls
 								StatusTextBlock.Text = winner + " перемогли через " + ending;
 
 							GameEndUserControl gameEndMenu = new GameEndUserControl(this);
-							GameEndMenu.Content = gameEndMenu;
+							OverlayMenu.Content = gameEndMenu;
 							mainMenuButton.Visibility = Visibility.Visible;
 						}
 
@@ -155,6 +170,14 @@ namespace ChessWPF.UserControls
 			}
 		}
 
+		public void ManageMove(MoveBase move)
+		{
+			board.Move(move);
+			BoardGrid.Children.Clear();
+			DrawPieces();
+			StatusTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "Хід білих" : "Хід чорних";
+		}
+
 		protected void AddToOverlayGrid()
 		{
 			OverlayGrid.Children.Clear();
@@ -170,13 +193,13 @@ namespace ChessWPF.UserControls
 			BoardGrid.Children.Clear();
 			DrawPieces();
 			StatusTextBlock.Text = "Хід білих";
-			GameEndMenu.Content = null;
+			OverlayMenu.Content = null;
 			mainMenuButton.Visibility = Visibility.Hidden;
 			movesCount = 1;
 			MovesList.Items.Clear();
 		}
 
-		protected void MoveToList(MoveBase move)
+		public void MoveToList(MoveBase move)
 		{
 			PieceBase piece = board.GetPiece(move.EndPosition);
 			StackPanel stackPanel = new StackPanel();
@@ -196,11 +219,15 @@ namespace ChessWPF.UserControls
 				movesCount++;
 				stackPanel.Children.Add(moveNumber);
 
-				if (piece is Pawn)
+				if (piece is Pawn || move is PromotionMove)
 					moveNumber.Margin = new Thickness(0, 0, 5, 0);
 			}
+			else if (piece is Pawn || move is PromotionMove)
+			{
+				moveText.Margin = new Thickness(5, 0, 0, 0);
+			}
 
-			if (!(piece is Pawn))
+			if (!(piece is Pawn) && !(move is PromotionMove))
 			{
 				img.Width = 40;
 				img.Source = GetImageSource(piece);
@@ -220,6 +247,11 @@ namespace ChessWPF.UserControls
 			}
 
 			moveText.Text += move.EndPosition.ToString();
+
+			if (move is PromotionMove)
+			{
+				moveText.Text += "=" + (move as PromotionMove).NewPiece;
+			}
 
 			if (board.GameOver != null)
 				moveText.Text += "#";

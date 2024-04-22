@@ -52,7 +52,7 @@ namespace ChessManagementClasses
 		{
 			char[] files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-			return (8 - currentRank).ToString() + files[currentFile];
+			return files[currentFile] + (8 - currentRank).ToString();
 		}
 
 		public string GetFileLetter()

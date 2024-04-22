@@ -37,7 +37,11 @@
             <UniformGrid x:Name="BoardGrid" Rows="8" Columns="8" Grid.Column="0" Grid.Row="1"
                  RenderOptions.BitmapScalingMode="HighQuality"/>
 
-            <ContentControl x:Name="GameEndMenu" Grid.Column="0" Grid.Row="1" />
+            <ContentControl x:Name="OverlayMenu" Grid.Column="0" Grid.Row="1" />
+
+            <!--<TextBlock Grid.Column="1" Grid.Row="0" Text="Історія ходів" Margin="15, 0, 0, 0"></TextBlock>-->
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="Історія ходів" Margin="15, 0, 0, 0"
+                       FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" FontSize="23"></TextBlock>
 
             <ListView x:Name="MovesList" Grid.Column="1" Grid.Row="1" Width="300"
                 FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
