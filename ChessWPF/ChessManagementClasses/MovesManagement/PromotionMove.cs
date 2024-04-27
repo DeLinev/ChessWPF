@@ -10,7 +10,6 @@ namespace ChessManagementClasses
 	public class PromotionMove : MoveBase
 	{
 		protected PieceBase capturedPiece;
-		public override MovesTypes Type => MovesTypes.Promotion;
 		public bool IsCapture { get => capturedPiece != null; }
 		protected ChessPieceType newPiece;
 		public string NewPiece { 

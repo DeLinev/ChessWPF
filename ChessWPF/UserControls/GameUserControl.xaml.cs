@@ -43,7 +43,10 @@ namespace ChessWPF.UserControls
 			DrawPieces();
 			mainMenuButton = btn;
 			mediaPlayer = new MediaPlayer();
-		}
+            mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
+            mediaPlayer.Play();
+			mediaPlayer.Stop();
+        }
 
 		protected void DrawPieces()
 		{
@@ -94,11 +97,9 @@ namespace ChessWPF.UserControls
 					{
 						if (move is PromotionMove)
 						{
-							//board.SetPiece(move.EndPosition, new Pawn(board.CurrentPlayer));
-							//board.SetPiece(move.StartPosition, null);
 							RegularMove regMove = new RegularMove(move.StartPosition, move.EndPosition);
 							regMove.MakeMove(board);
-							BoardGrid.Children.Clear(); // ???
+							BoardGrid.Children.Clear();
 							DrawPieces();
 							regMove.ReverseMove(board);
 
@@ -112,9 +113,6 @@ namespace ChessWPF.UserControls
 							ManageMove(move);
 							MoveToList(move);
 						}
-
-						// Add move to the MovesList
-						//MoveToList(move);
 
 						// Play sound
 						mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
@@ -219,15 +217,15 @@ namespace ChessWPF.UserControls
 				movesCount++;
 				stackPanel.Children.Add(moveNumber);
 
-				if (piece is Pawn || move is PromotionMove)
+				if (piece is Pawn || move is PromotionMove || move is CastlingMove)
 					moveNumber.Margin = new Thickness(0, 0, 5, 0);
 			}
-			else if (piece is Pawn || move is PromotionMove)
+			else if (piece is Pawn || move is PromotionMove || move is CastlingMove)
 			{
 				moveText.Margin = new Thickness(5, 0, 0, 0);
 			}
 
-			if (!(piece is Pawn) && !(move is PromotionMove))
+			if (!(piece is Pawn) && !(move is PromotionMove) && !(move is CastlingMove))
 			{
 				img.Width = 40;
 				img.Source = GetImageSource(piece);
@@ -251,6 +249,11 @@ namespace ChessWPF.UserControls
 			if (move is PromotionMove)
 			{
 				moveText.Text += "=" + (move as PromotionMove).NewPiece;
+			}
+
+			if (move is CastlingMove)
+			{
+                moveText.Text = (move as CastlingMove).castlingDirection == PositionChanges.Right ? "0-0" : "0-0-0";
 			}
 
 			if (board.GameOver != null)

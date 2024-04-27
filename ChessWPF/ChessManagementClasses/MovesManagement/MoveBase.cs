@@ -8,15 +8,20 @@ namespace ChessManagementClasses
 {
 	public abstract class MoveBase
 	{
-		public abstract MovesTypes Type { get; }
-		public Position StartPosition { get; }
-		public Position EndPosition { get; }
+		public Position StartPosition { get; protected set; }
+		public Position EndPosition { get; protected set; }
 
 		public MoveBase(Position start, Position end)
 		{
 			StartPosition = start;
 			EndPosition = end;
 		}
+
+		public MoveBase()
+		{
+            StartPosition = new Position(0, 0);
+            EndPosition = new Position(0, 0);
+        }
 
 		public abstract void MakeMove(Board board);
 

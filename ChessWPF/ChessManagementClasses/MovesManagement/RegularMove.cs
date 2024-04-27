@@ -9,7 +9,6 @@ namespace ChessManagementClasses
 	public class RegularMove : MoveBase
 	{
 		protected PieceBase capturedPiece;
-		public override MovesTypes Type { get => MovesTypes.Regular; }
 		public bool IsCapture { get => capturedPiece != null; }
 		public RegularMove(Position start, Position end) : base(start, end) { }
 

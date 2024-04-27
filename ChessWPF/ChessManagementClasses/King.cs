@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Automation;
 
 namespace ChessManagementClasses
 {
@@ -29,7 +30,54 @@ namespace ChessManagementClasses
 					moves.Add(new RegularMove(new Position(position), new Position(current)));
 			}
 
+			if (CanCastle(board, PositionChanges.Right))
+				moves.Add(new CastlingMove(PositionChanges.Right, new Position(position)));
+
+			if (CanCastle(board, PositionChanges.Left))
+				moves.Add(new CastlingMove(PositionChanges.Left, new Position(position)));
+
 			return moves;
 		}
+
+		protected bool CanCastle(Board board, PositionChanges positionChange)
+		{
+			if (HasMoved)
+                return false;
+
+			Position rookPosition;
+			Position kingPosition;
+
+            if (positionChange == PositionChanges.Right)
+			{
+				if (Color == PieceColor.White)
+				{
+					rookPosition = new Position(7, 7);
+					kingPosition = new Position(7, 4);
+				}
+				else
+				{
+					rookPosition = new Position(0, 7);
+                    kingPosition = new Position(0, 4);
+                }
+            }
+			else
+			{
+				if (Color == PieceColor.White)
+				{
+					rookPosition = new Position(7, 0);
+					kingPosition = new Position(7, 4);
+				}
+				else
+				{
+					rookPosition = new Position(0, 0);
+					kingPosition = new Position(0, 4);
+				}
+			}
+
+            if (board.IsPositionEmpty(rookPosition) || board.GetPiece(rookPosition).HasMoved)
+                return false;
+
+			return true;
+        }
 	}
 }
