@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessManagementClasses
+﻿namespace ChessManagementClasses
 {
-	public class PromotionMove : MoveBase
+    public class PromotionMove : MoveBase
 	{
 		protected PieceBase capturedPiece;
-		public bool IsCapture { get => capturedPiece != null; }
-		protected ChessPieceType newPiece;
+        protected ChessPieceType newPiece;
+
 		public string NewPiece { 
 			get {
 				switch(newPiece)

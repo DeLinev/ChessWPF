@@ -21,8 +21,8 @@ namespace ChessWPF.UserControls
     /// </summary>
     public partial class PromotionMenuUserControl : UserControl
     {
-        GameUserControl gameUserControl;
-        PromotionMove move;
+        protected GameUserControl gameUserControl;
+        protected PromotionMove move;
 
         public PromotionMenuUserControl(GameUserControl usrCntrl, PromotionMove promMove)
         {

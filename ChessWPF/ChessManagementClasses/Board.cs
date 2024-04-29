@@ -11,6 +11,7 @@ namespace ChessManagementClasses
 		protected PieceBase[,] pieces = new PieceBase[8, 8];
 
 		protected PieceColor currentPlayer;
+		public Position EnPassantPosition { get; set; }
 
 		public PieceColor CurrentPlayer { get => currentPlayer; }
 		public GameOver GameOver { get; set; }
@@ -23,12 +24,12 @@ namespace ChessManagementClasses
 
 		public PieceBase GetPiece(Position position)
 		{
-			return pieces[position.currentRank, position.currentFile];
+			return pieces[position.Rank, position.File];
 		}
 
 		public void SetPiece(Position position, PieceBase piece)
 		{
-			pieces[position.currentRank, position.currentFile] = piece;
+			pieces[position.Rank, position.File] = piece;
 		}
 
 		public void SetBoard()
@@ -77,8 +78,8 @@ namespace ChessManagementClasses
 
 		public static bool IsPositionValid(Position position)
 		{
-			return position.currentRank >= 0 && position.currentRank < 8 &&
-				position.currentFile >= 0 && position.currentFile < 8;
+			return position.Rank >= 0 && position.Rank < 8 &&
+				position.File >= 0 && position.File < 8;
 		}
 
 		public List<MoveBase> GetPossibleMoves(Position position)
@@ -99,6 +100,8 @@ namespace ChessManagementClasses
 
 		public void Move(MoveBase move)
 		{
+			EnPassantPosition = null;
+
 			move.MakeMove(this);
 			PieceColor opponent = currentPlayer;
 			currentPlayer = currentPlayer == PieceColor.White ? PieceColor.Black : PieceColor.White;

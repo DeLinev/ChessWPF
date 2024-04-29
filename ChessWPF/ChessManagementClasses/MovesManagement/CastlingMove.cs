@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessManagementClasses
+﻿namespace ChessManagementClasses
 {
     class CastlingMove : MoveBase
     {
@@ -17,19 +11,19 @@ namespace ChessManagementClasses
         public CastlingMove(PositionChanges posChange, Position kingPosition)
         {
             StartPosition = kingPosition;
-            EndPosition = new Position(StartPosition.currentRank, StartPosition.ChangePosition(posChange, 2).currentFile);
+            EndPosition = new Position(StartPosition.Rank, StartPosition.ChangePosition(posChange, 2).File);
 
             if (posChange == PositionChanges.Right)
             {
                 castlingDirection = PositionChanges.Right;
-                rookStart = new Position(StartPosition.currentRank, 7);
-                rookEnd = new Position(StartPosition.currentRank, rookStart.ChangePosition(posChange, -2).currentFile);
+                rookStart = new Position(StartPosition.Rank, 7);
+                rookEnd = new Position(StartPosition.Rank, rookStart.ChangePosition(posChange, -2).File);
             }
             else
             {
                 castlingDirection = PositionChanges.Left;
-                rookStart = new Position(StartPosition.currentRank, 0);
-                rookEnd = new Position(StartPosition.currentRank, rookStart.ChangePosition(posChange, -3).currentFile);
+                rookStart = new Position(StartPosition.Rank, 0);
+                rookEnd = new Position(StartPosition.Rank, rookStart.ChangePosition(posChange, -3).File);
             }
         }
 
@@ -58,7 +52,7 @@ namespace ChessManagementClasses
 
             for (int i = 1; i < 3; i++)
             {
-                Position current = new Position(StartPosition.currentRank, StartPosition.ChangePosition(castlingDirection, i).currentFile);
+                Position current = new Position(StartPosition.Rank, StartPosition.ChangePosition(castlingDirection, i).File);
                 RegularMove move = new RegularMove(StartPosition, current);
 
                 if (!board.IsPositionEmpty(current))

@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessManagementClasses
+﻿namespace ChessManagementClasses
 {
-	public abstract class MoveBase
+    public abstract class MoveBase
 	{
 		public Position StartPosition { get; protected set; }
 		public Position EndPosition { get; protected set; }
 
 		public MoveBase(Position start, Position end)
 		{
-			StartPosition = start;
-			EndPosition = end;
+			StartPosition = new Position(start);
+			EndPosition = new Position(end);
 		}
 
 		public MoveBase()

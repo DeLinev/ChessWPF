@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessManagementClasses
+﻿namespace ChessManagementClasses
 {
-	public class RegularMove : MoveBase
+    public class RegularMove : MoveBase
 	{
 		protected PieceBase capturedPiece;
+
 		public bool IsCapture { get => capturedPiece != null; }
+
 		public RegularMove(Position start, Position end) : base(start, end) { }
 
 		public override void MakeMove(Board board)

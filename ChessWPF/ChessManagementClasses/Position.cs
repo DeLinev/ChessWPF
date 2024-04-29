@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessManagementClasses
+﻿namespace ChessManagementClasses
 {
-	public class Position
+    public class Position
 	{
-		public int currentRank { get; }
-		public int currentFile { get; }
+		public int Rank { get; }
+		public int File { get; }
 
 		public Position(int rank, int file)
 		{
-			currentRank = rank;
-			currentFile = file;
+			Rank = rank;
+			File = file;
 		}
 
 		public Position(Position obj)
 		{
-			currentRank = obj.currentRank;
-			currentFile = obj.currentFile;
+			Rank = obj.Rank;
+			File = obj.File;
 		}
 
 		public Position ChangePosition(PositionChanges change, int k = 1)
@@ -28,21 +22,21 @@ namespace ChessManagementClasses
 			switch (change)
 			{
 				case PositionChanges.Up:
-					return new Position(currentRank - 1 * k, currentFile);
+					return new Position(Rank - 1 * k, File);
 				case PositionChanges.Down:
-					return new Position(currentRank + 1 * k, currentFile);
+					return new Position(Rank + 1 * k, File);
 				case PositionChanges.Left:
-					return new Position(currentRank, currentFile - 1 * k);
+					return new Position(Rank, File - 1 * k);
 				case PositionChanges.Right:
-					return new Position(currentRank, currentFile + 1 * k);
+					return new Position(Rank, File + 1 * k);
 				case PositionChanges.UpLeft:
-					return new Position(currentRank - 1 * k, currentFile - 1 * k);
+					return new Position(Rank - 1 * k, File - 1 * k);
 				case PositionChanges.UpRight:
-					return new Position(currentRank - 1 * k, currentFile + 1 * k);
+					return new Position(Rank - 1 * k, File + 1 * k);
 				case PositionChanges.DownLeft:
-					return new Position(currentRank + 1 * k, currentFile - 1 * k);
+					return new Position(Rank + 1 * k, File - 1 * k);
 				case PositionChanges.DownRight:
-					return new Position(currentRank + 1 * k, currentFile + 1 * k);
+					return new Position(Rank + 1 * k, File + 1 * k);
 				default:
 					throw new ArgumentException("Invalid position change");
 			}
@@ -52,14 +46,28 @@ namespace ChessManagementClasses
 		{
 			char[] files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-			return files[currentFile] + (8 - currentRank).ToString();
+			return files[File] + (8 - Rank).ToString();
 		}
 
 		public string GetFileLetter()
 		{
 			char[] files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-			return files[currentFile].ToString();
+			return files[File].ToString();
 		}
-	}
+
+        public override bool Equals(object? obj)
+        {
+			if (obj is not Position position)
+				return false;
+
+            return Rank == position.Rank
+				&& File == position.File;
+        }
+
+		public override int GetHashCode()
+		{
+            return HashCode.Combine(File, Rank);
+        }
+    }
 }

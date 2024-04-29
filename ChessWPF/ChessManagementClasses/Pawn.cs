@@ -1,83 +1,65 @@
-﻿using ChessManagementClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessManagementClasses
+﻿namespace ChessManagementClasses
 {
-	public class Pawn : PieceBase
-	{
-		public override ChessPieceType Type { get => ChessPieceType.Pawn; }
+    public class Pawn : PieceBase
+    {
+        public override ChessPieceType Type { get => ChessPieceType.Pawn; }
 
-		public Pawn(PieceColor color) : base(color) { }
+        public Pawn(PieceColor color) : base(color) { }
 
-		public Pawn(Pawn obj) : base(obj.Color) { }
+        public override List<MoveBase> GetPossibleMoves(Board board, Position position)
+        {
+            List<MoveBase> moves = new List<MoveBase>();
+            Position current;
+            PositionChanges dir;
+            PositionChanges[] dirs;
 
-		public override List<MoveBase> GetPossibleMoves(Board board, Position position)
-		{
-			List<MoveBase> moves = new List<MoveBase>();
-			Position current;
+            if (Color == PieceColor.White)
+            {
+                dir = PositionChanges.Up;
+                dirs = [PositionChanges.UpLeft, PositionChanges.UpRight];
+            }
+            else
+            {
+                dir = PositionChanges.Down;
+                dirs = [PositionChanges.DownLeft, PositionChanges.DownRight];
+            }
 
-			if (Color == PieceColor.White) // White pawns
-			{
-				// Adds possible move for the Up direction
-				current = position.ChangePosition(PositionChanges.Up);
-				if (Board.IsPositionValid(current) && board.IsPositionEmpty(current))
-					SelectMove(position, current, moves);
+            //Adds possible move for the Up direction
 
-				// Adds possible move for the Upx2 direction
-				Position oneUp = position.ChangePosition(PositionChanges.Up);
-				current = position.ChangePosition(PositionChanges.Up, 2);
-				if (Board.IsPositionValid(current) && board.IsPositionEmpty([current, oneUp]) && !this.HasMoved)
-					moves.Add(new RegularMove(new Position(position), new Position(current)));
+            current = position.ChangePosition(dir);
+            if (Board.IsPositionValid(current) && board.IsPositionEmpty(current))
+                SelectMove(position, current, moves);
 
-				// Adds possible moves for diagonals direction
-				foreach (PositionChanges direction in new PositionChanges[] { PositionChanges.UpLeft, PositionChanges.UpRight })
-				{
-					current = position.ChangePosition(direction);
-					if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
-						SelectMove(position, current, moves);
-				}
-			}
-			else // Black pawns
-			{
-				// Adds possible move for the Down direction
-				current = position.ChangePosition(PositionChanges.Down);
-				if (Board.IsPositionValid(current) && board.IsPositionEmpty(current))
-					SelectMove(position, current, moves);
+            // Adds possible move for the Upx2 direction
+            Position oneStep = position.ChangePosition(dir);
+            current = position.ChangePosition(dir, 2);
+            if (Board.IsPositionValid(current) && board.IsPositionEmpty([current, oneStep]) && !HasMoved)
+                moves.Add(new RegularMove(position, current));
 
-				// Adds possible move for the Downx2 direction
-				Position oneDown = position.ChangePosition(PositionChanges.Down);
-				current = position.ChangePosition(PositionChanges.Down, 2);
-				if (Board.IsPositionValid(current) && board.IsPositionEmpty([current, oneDown]) && !this.HasMoved)
-					moves.Add(new RegularMove(new Position(position), new Position(current)));
+            // Adds possible moves for diagonals direction
+            foreach (PositionChanges direction in dirs)
+            {
+                current = position.ChangePosition(direction);
 
-				// Adds possible moves for diagonals direction
-				foreach (PositionChanges direction in new PositionChanges[] { PositionChanges.DownLeft, PositionChanges.DownRight })
-				{
-					current = position.ChangePosition(direction);
-					if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
-						SelectMove(position, current, moves);
-				}
-			}
+                if (current.Equals(board.EnPassantPosition))
+                {
+                    moves.Add(new EnPassantMove(position, current));
+                    continue;
+                }
 
-			return moves;
-		}
+                if (Board.IsPositionValid(current) && !board.IsPositionEmpty(current) && board.GetPiece(current).Color != Color)
+                    SelectMove(position, current, moves);
+            }
 
-		protected void SelectMove(Position position, Position current, List<MoveBase> moves)
-		{
-			if (Color == PieceColor.White ? current.currentRank == 0 : current.currentRank == 7) // Promotion
-			{
-				//foreach (MoveBase move in PossiblePromotions(position, current))
-				//	moves.Add(move);
-				moves.Add(new PromotionMove(new Position(position), new Position(current)));
-			}
-			else
-			{
-				moves.Add(new RegularMove(new Position(position), new Position(current)));
-			}
-		}
-	}
+            return moves;
+        }
+
+        protected void SelectMove(Position position, Position current, List<MoveBase> moves)
+        {
+            if (Color == PieceColor.White ? current.Rank == 0 : current.Rank == 7) // Promotion
+                moves.Add(new PromotionMove(position, current));
+            else
+                moves.Add(new RegularMove(position, current));
+        }
+    }
 }

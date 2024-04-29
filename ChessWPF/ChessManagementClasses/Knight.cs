@@ -1,19 +1,10 @@
-﻿using ChessManagementClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChessManagementClasses
+﻿namespace ChessManagementClasses
 {
-	public class Knight : PieceBase
+    public class Knight : PieceBase
 	{
 		public override ChessPieceType Type { get => ChessPieceType.Knight; }
 
 		public Knight(PieceColor color) : base(color) { }
-
-		public Knight(Knight obj) : base(obj.Color) { }
 
 		public override List<MoveBase> GetPossibleMoves(Board board, Position position)
 		{
@@ -28,32 +19,24 @@ namespace ChessManagementClasses
 			return moves;
 		}
 
-		protected override IEnumerable<Position> PossibleMovesInDirection(Board board, Position position, PositionChanges direction)
+		protected override IEnumerable<Position> PossibleMovesInDirection(Board board, Position position, PositionChanges mainDirection)
 		{
 			Position current;
+			PositionChanges[] dirs;
 
-			if (direction == PositionChanges.Up || direction == PositionChanges.Down)
-			{
-				current = position.ChangePosition(direction, 2).ChangePosition(PositionChanges.Right);
-				if (Board.IsPositionValid(current) && (board.IsPositionEmpty(current) || board.GetPiece(current).Color != Color))
-					yield return new Position(current);
+            if (mainDirection == PositionChanges.Up || mainDirection == PositionChanges.Down)
+                dirs = [PositionChanges.Right, PositionChanges.Left];
+            else
+                dirs = [PositionChanges.Up, PositionChanges.Down];
 
-				current = position.ChangePosition(direction, 2).ChangePosition(PositionChanges.Left);
-				if (Board.IsPositionValid(current) && (board.IsPositionEmpty(current) || board.GetPiece(current).Color != Color))
-					yield return new Position(current);
-			}
-			else
-			{
-				current = position.ChangePosition(direction, 2).ChangePosition(PositionChanges.Up);
-				if (Board.IsPositionValid(current) && (board.IsPositionEmpty(current) || board.GetPiece(current).Color != Color))
-					yield return new Position(current);
+            foreach (var dir in dirs)
+            {
+                current = position.ChangePosition(mainDirection, 2).ChangePosition(dir);
+                if (Board.IsPositionValid(current) && (board.IsPositionEmpty(current) || board.GetPiece(current).Color != Color))
+                    yield return current;
+            }
 
-				current = position.ChangePosition(direction, 2).ChangePosition(PositionChanges.Down);
-				if (Board.IsPositionValid(current) && (board.IsPositionEmpty(current) || board.GetPiece(current).Color != Color))
-					yield return new Position(current);
-			}
-
-			yield break;
+            yield break;
 		}
 	}
 }
