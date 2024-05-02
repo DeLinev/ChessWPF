@@ -25,21 +25,28 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock x:Name="StatusTextBlock"></TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="StatusTextBlock" Width="200"></TextBlock>
+                <TextBlock x:Name="TimerWhiteTextBlock" FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
+                        FontSize="18" Padding="299,0,0,0"></TextBlock>
+                <TextBlock Text="/" FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
+                        FontSize="18"></TextBlock>
+                <TextBlock x:Name="TimerBlackTextBlock" FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
+                        FontSize="18"></TextBlock>
+            </StackPanel>
 
             <Image Grid.Column="0" Grid.Row="1" Source="/Assets/ChessBoard.png" 
                 HorizontalAlignment="Left" VerticalAlignment="Top" Width="600"/>
 
             <UniformGrid x:Name="OverlayGrid" Rows="8" Columns="8" Grid.Column="0" 
-                         Grid.Row="1" >
+                         Grid.Row="1">
             </UniformGrid>
 
             <UniformGrid x:Name="BoardGrid" Rows="8" Columns="8" Grid.Column="0" Grid.Row="1"
-                 RenderOptions.BitmapScalingMode="HighQuality"/>
+                 RenderOptions.BitmapScalingMode="HighQuality" />
 
             <ContentControl x:Name="OverlayMenu" Grid.Column="0" Grid.Row="1" />
 
-            <!--<TextBlock Grid.Column="1" Grid.Row="0" Text="Історія ходів" Margin="15, 0, 0, 0"></TextBlock>-->
             <TextBlock Grid.Column="1" Grid.Row="1" Text="Історія ходів" Margin="15, 0, 0, 0"
                        FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" FontSize="23"></TextBlock>
 

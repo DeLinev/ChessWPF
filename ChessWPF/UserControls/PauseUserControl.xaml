@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ChessWPF.UserControls.GameEndUserControl"
+﻿<UserControl x:Class="ChessWPF.UserControls.PauseUserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -29,16 +29,15 @@
             </Border.Background>
 
             <StackPanel>
-                <TextBlock Text="Кінець гри" FontSize="50" HorizontalAlignment="Center" Foreground="#34364C"
-                           FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" Margin="0, 30, 0, 10"/>
-                <TextBlock x:Name="WinnerTextBlock" Text="Білі перемогли!" FontSize="40" HorizontalAlignment="Center" Foreground="#34364C"
-                           FontFamily="/Fonts/Roboto-Medium.ttf #Roboto"/>
-                <TextBlock x:Name="ReasonTextBlock" Text="мат" FontSize="30" HorizontalAlignment="Center" Foreground="#34364C"
-                           FontFamily="/Fonts/Roboto-Italic.ttf #Roboto"/>
+                <TextBlock Text="Пауза" FontSize="50" HorizontalAlignment="Center" Foreground="#34364C"
+                   FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" Margin="0, 30, 0, 10"/>
+
+                <Button x:Name="ContinueButton" Style="{StaticResource MenuButtonStyle}" Content="Продовжити" HorizontalAlignment="Center"
+                    Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" Click="ContinueButton_Click" />
                 <Button x:Name="NewGameButton" Style="{StaticResource MenuButtonStyle}" Content="Нова гра" HorizontalAlignment="Center"
-                        Width="240" Margin="20" Padding="20" FontSize="20" Background="#9991ec" Click="NewGameButton_Click"/>
+                    Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" Click="NewGameButton_Click" />
                 <Button x:Name="MainMenuButton" Style="{StaticResource MenuButtonStyle}" Content="Головне меню" HorizontalAlignment="Center"
-                        Width="240" Padding="20" FontSize="20" Background="#9991ec" Click="MainMenuButton_Click" />
+                    Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" Click="MainMenuButton_Click" />
             </StackPanel>
         </Border>
     </Grid>

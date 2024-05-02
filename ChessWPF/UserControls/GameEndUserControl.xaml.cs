@@ -28,12 +28,28 @@ namespace ChessWPF.UserControls
 			userControl = usrCntrl;
 			WinnerTextBlock.Text = userControl.Board.GameOver.Winner == null ? "Нічия" : 
 				userControl.Board.GameOver.Winner == PieceColor.White ? "Білі перемогли!" : "Чорні перемогли!";
-			ReasonTextBlock.Text = userControl.Board.GameOver.Ending == PossibleEndings.CheckMate ? "мат" : "пат";
+			switch (userControl.Board.GameOver.Ending)
+			{
+                case PossibleEndings.CheckMate:
+                    ReasonTextBlock.Text = "мат";
+                    break;
+                case PossibleEndings.StaleMate:
+                    ReasonTextBlock.Text = "пат";
+                    break;
+                case PossibleEndings.TimerIsOver:
+                    ReasonTextBlock.Text = "час вичерпано";
+                    break;
+            }
 		}
 
 		private void NewGameButton_Click(object sender, RoutedEventArgs e)
 		{
 			userControl.ResetGame();
 		}
+
+        private void MainMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+			userControl.ToMainMenu();
+        }
     }
 }

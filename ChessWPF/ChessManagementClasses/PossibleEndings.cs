@@ -9,6 +9,7 @@ namespace ChessManagementClasses
 	public enum PossibleEndings
 	{
 		CheckMate,
-		StaleMate
+		StaleMate,
+		TimerIsOver
 	}
 }

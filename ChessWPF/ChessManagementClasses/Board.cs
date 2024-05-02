@@ -11,8 +11,8 @@ namespace ChessManagementClasses
 		protected PieceBase[,] pieces = new PieceBase[8, 8];
 
 		protected PieceColor currentPlayer;
-		public Position EnPassantPosition { get; set; }
 
+		public Position EnPassantPosition { get; set; }
 		public PieceColor CurrentPlayer { get => currentPlayer; }
 		public GameOver GameOver { get; set; }
 

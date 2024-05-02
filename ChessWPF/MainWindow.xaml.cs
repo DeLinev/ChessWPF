@@ -37,5 +37,11 @@ namespace ChessWPF
 			ComputerGameButton.Visibility = Visibility.Visible;
 			MainMenuButton.Visibility = Visibility.Hidden;
 		}
-	}
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+			if (contentControl.Content is GameUserControl && e.Key == Key.Escape)
+				(contentControl.Content as GameUserControl).TogglePauseMenu();
+        }
+    }
 }

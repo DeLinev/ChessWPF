@@ -1,19 +1,11 @@
 ﻿using ChessManagementClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Media;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace ChessWPF.UserControls
 {
@@ -30,6 +22,9 @@ namespace ChessWPF.UserControls
         protected MediaPlayer mediaPlayer;
         protected List<MoveBase> possibleMoves;
 
+        public bool IsTimerEnabled { get; set; } = true;
+        public ChessTimer TimerWhite { get; protected set;}
+        public ChessTimer TimerBlack { get; protected set; }
         public Board Board { get => board; }
 
         public GameUserControl(Button btn)
@@ -47,6 +42,19 @@ namespace ChessWPF.UserControls
             mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
             mediaPlayer.Play();
             mediaPlayer.Stop();
+
+            TimerWhite = new ChessTimer();
+            TimerWhite.SetInterval(new TimeSpan(0, 0, 1));
+            TimerWhite.SetTick(TimerTick);
+
+            TimerBlack = new ChessTimer();
+            TimerBlack.SetInterval(new TimeSpan(0, 0, 1));
+            TimerBlack.SetTick(TimerTick);
+
+            TimerWhiteTextBlock.Text = TimerWhite.Time;
+            TimerBlackTextBlock.Text = TimerBlack.Time;
+
+            OverlayMenu.Content = new TimerUserControl(this);
         }
 
         protected void DrawPieces()
@@ -124,6 +132,20 @@ namespace ChessWPF.UserControls
                         mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
                         mediaPlayer.Play();
 
+                        if (IsTimerEnabled)
+                        {
+                            if (board.CurrentPlayer == PieceColor.Black)
+                            {
+                                TimerBlack.Start();
+                                TimerWhite.Stop();
+                            }
+                            else
+                            {
+                                TimerWhite.Start();
+                                TimerBlack.Stop();
+                            }
+                        }
+
                         // Check if the game is over
                         if (board.GameOver != null)
                         {
@@ -137,18 +159,16 @@ namespace ChessWPF.UserControls
 
                             GameEndUserControl gameEndMenu = new GameEndUserControl(this);
                             OverlayMenu.Content = gameEndMenu;
-                            mainMenuButton.Visibility = Visibility.Visible;
+                            
+                            TimerWhite.Stop();
+                            TimerBlack.Stop();
                         }
 
                         break;
                     }
                 }
 
-                possibleMovesOverlay[chosenPos.Rank, chosenPos.File].Fill = Brushes.Transparent;
-                chosenPos = null;
-
-                OverlayGrid.Children.Clear();
-                possibleMoves.Clear();
+                ClearOverlayGrid();
 
             }
             else
@@ -191,8 +211,20 @@ namespace ChessWPF.UserControls
                     OverlayGrid.Children.Add(possibleMovesOverlay[i, j]);
         }
 
+        protected void ClearOverlayGrid()
+        {
+            if (chosenPos != null)
+            {
+                possibleMovesOverlay[chosenPos.Rank, chosenPos.File].Fill = Brushes.Transparent;
+                chosenPos = null;
+                OverlayGrid.Children.Clear();
+                possibleMoves.Clear();
+            }
+        }
+
         public void ResetGame()
         {
+            ClearOverlayGrid();
             board = new Board();
             BoardGrid.Children.Clear();
             DrawPieces();
@@ -201,6 +233,23 @@ namespace ChessWPF.UserControls
             mainMenuButton.Visibility = Visibility.Hidden;
             movesCount = 1;
             MovesList.Items.Clear();
+
+            if (IsTimerEnabled)
+                TimerReset();
+        }
+
+        protected void TimerReset()
+        {
+            TimerWhite.Reset();
+            TimerBlack.Reset();
+            TimerWhite.Start();
+            TimerWhiteTextBlock.Text = TimerWhite.Time;
+            TimerBlackTextBlock.Text = TimerBlack.Time;
+        }
+
+        public void ToMainMenu()
+        {
+            mainMenuButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
 
         public void MoveToList(MoveBase move)
@@ -362,5 +411,55 @@ namespace ChessWPF.UserControls
 
         protected bool IsPawnDoubleMove(MoveBase move) =>
             board.GetPiece(move.EndPosition) is Pawn && Math.Abs(move.StartPosition.Rank - move.EndPosition.Rank) == 2;
+
+        public void TogglePauseMenu()
+        {
+            if (OverlayMenu.Content is PauseUserControl)
+            {
+                OverlayMenu.Content = null;
+
+                if (board.CurrentPlayer == PieceColor.White)
+                    TimerWhite.Start();
+                else
+                    TimerBlack.Start();
+            }
+            else
+            {
+                PauseUserControl pauseMenu = new PauseUserControl(this);
+                OverlayMenu.Content = pauseMenu;
+                TimerWhite.Stop();
+                TimerBlack.Stop();
+            }
+        }
+
+        private void TimerTick(object? sender, EventArgs e)
+        {
+            if (board.CurrentPlayer == PieceColor.White)
+            {
+                TimerWhite.HandleTimer();
+                TimerWhiteTextBlock.Text = TimerWhite.Time;
+
+                if (TimerWhite.Time == "00:00")
+                {
+                    board.GameOver = new GameOver(PieceColor.Black, PossibleEndings.TimerIsOver);
+                    StatusTextBlock.Text = "Час білих вичерпано";
+                    GameEndUserControl gameEndMenu = new GameEndUserControl(this);
+                    OverlayMenu.Content = gameEndMenu;
+                }
+            }
+            else
+            {
+                TimerBlack.HandleTimer();
+                TimerBlackTextBlock.Text = TimerBlack.Time;
+
+                if (TimerBlack.Time == "00:00")
+                {
+                    board.GameOver = new GameOver(PieceColor.White, PossibleEndings.TimerIsOver);
+                    StatusTextBlock.Text = "Час чорних вичерпано";
+                    GameEndUserControl gameEndMenu = new GameEndUserControl(this);
+                    OverlayMenu.Content = gameEndMenu;
+                }
+            }
+        }
     }
 }
