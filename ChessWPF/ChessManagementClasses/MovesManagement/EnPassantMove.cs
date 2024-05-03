@@ -3,7 +3,6 @@
     public class EnPassantMove : MoveBase
     {
         protected Position capturedPawnPosition;
-        protected PieceBase capturedPiece;
         protected RegularMove pawnMove;
 
         public EnPassantMove(Position start, Position end) : base(start, end)

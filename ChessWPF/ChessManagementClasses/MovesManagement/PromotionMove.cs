@@ -2,7 +2,6 @@
 {
     public class PromotionMove : MoveBase
 	{
-		protected PieceBase capturedPiece;
         protected ChessPieceType newPiece;
 
 		public string NewPiece { 

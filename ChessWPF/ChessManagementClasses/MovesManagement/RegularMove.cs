@@ -2,10 +2,6 @@
 {
     public class RegularMove : MoveBase
 	{
-		protected PieceBase capturedPiece;
-
-		public bool IsCapture { get => capturedPiece != null; }
-
 		public RegularMove(Position start, Position end) : base(start, end) { }
 
 		public override void MakeMove(Board board)

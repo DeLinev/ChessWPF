@@ -9,10 +9,13 @@ namespace ChessManagementClasses
 	public class Board
 	{
 		protected PieceBase[,] pieces = new PieceBase[8, 8];
-
 		protected PieceColor currentPlayer;
+		protected Dictionary<ChessPieceType, byte> whitePiecesNum;
+		protected Dictionary<ChessPieceType, byte> blackPiecesNum;
+        protected byte totalPiecesNum;
+		protected byte fiftyMoveRuleCounter;
 
-		public Position EnPassantPosition { get; set; }
+        public Position EnPassantPosition { get; set; }
 		public PieceColor CurrentPlayer { get => currentPlayer; }
 		public GameOver GameOver { get; set; }
 
@@ -20,6 +23,19 @@ namespace ChessManagementClasses
 		{
 			SetBoard();
 			currentPlayer = PieceColor.White;
+
+			whitePiecesNum = new Dictionary<ChessPieceType, byte>();
+			blackPiecesNum = new Dictionary<ChessPieceType, byte>();
+
+			foreach (ChessPieceType pieceType in new ChessPieceType[] { ChessPieceType.Pawn, ChessPieceType.Rook, ChessPieceType.Knight, 
+				ChessPieceType.Bishop, ChessPieceType.Queen, ChessPieceType.King})
+			{
+				whitePiecesNum[pieceType] = 0;
+				blackPiecesNum[pieceType] = 0;
+            }
+
+			totalPiecesNum = 0;
+			fiftyMoveRuleCounter = 0;
 		}
 
 		public PieceBase GetPiece(Position position)
@@ -106,6 +122,11 @@ namespace ChessManagementClasses
 			PieceColor opponent = currentPlayer;
 			currentPlayer = currentPlayer == PieceColor.White ? PieceColor.Black : PieceColor.White;
 
+			if (move.IsCapture || GetPiece(move.EndPosition).Type == ChessPieceType.Pawn)
+				fiftyMoveRuleCounter = 0;
+            else
+                fiftyMoveRuleCounter++;
+
 			if (isStalemate())
 			{
 				if (IsCheck())
@@ -113,6 +134,10 @@ namespace ChessManagementClasses
 				else
 					GameOver = new GameOver(null, PossibleEndings.StaleMate);
 			}
+			else if (IsInsuffMaterial())
+                GameOver = new GameOver(null, PossibleEndings.InsuffMaterial);
+			else if (IsFiftyMoveRule())
+				GameOver = new GameOver(null, PossibleEndings.FiftyMoveRule);
 		}
 
 		public bool IsCheck()
@@ -152,5 +177,91 @@ namespace ChessManagementClasses
 
 			return false;
 		}
+
+		public bool IsInsuffMaterial()
+		{
+			CountPieces();
+
+			if (totalPiecesNum == 2)
+                return true;
+
+			if (totalPiecesNum == 3)
+			{
+				if (GetPiecesNum(ChessPieceType.Bishop, PieceColor.White) == 1 ||
+					GetPiecesNum(ChessPieceType.Bishop, PieceColor.Black) == 1)
+					return true;
+
+				if (GetPiecesNum(ChessPieceType.Knight, PieceColor.White) == 1 ||
+                    GetPiecesNum(ChessPieceType.Knight, PieceColor.Black) == 1)
+					return true;
+            }
+
+            if (totalPiecesNum == 4)
+			{
+                if (GetPiecesNum(ChessPieceType.Bishop, PieceColor.White) != 1 ||
+                    GetPiecesNum(ChessPieceType.Bishop, PieceColor.Black) != 1)
+                    return false;
+
+				Position WhiteBishopPosition = new Position(0, 0);
+				Position BlackBishopPosition = new Position(0, 0);
+
+                for (int i = 0; i < 8; i++)
+				{
+					for (int j = 0; j < 8; j++)
+					{
+                        if (pieces[i, j] != null && pieces[i, j].Type == ChessPieceType.Bishop)
+						{
+							if (pieces[i, j].Color == PieceColor.White)
+                                WhiteBishopPosition = new Position(i, j);
+                            else
+                                BlackBishopPosition = new Position(i, j);
+						}
+                    }
+				}
+
+				if ((WhiteBishopPosition.File + WhiteBishopPosition.Rank) % 2 == (BlackBishopPosition.File + BlackBishopPosition.Rank) % 2)
+                    return true;
+            }
+
+            return false;
+        }
+
+		protected void CountPieces()
+		{
+            foreach (ChessPieceType pieceType in new ChessPieceType[] { ChessPieceType.Pawn, ChessPieceType.Rook, ChessPieceType.Knight,
+                ChessPieceType.Bishop, ChessPieceType.Queen, ChessPieceType.King})
+            {
+                whitePiecesNum[pieceType] = 0;
+                blackPiecesNum[pieceType] = 0;
+            }
+
+            totalPiecesNum = 0;
+
+            for (int i = 0; i < 8; i++)
+			{
+                for (int j = 0; j < 8; j++)
+				{
+                    if (pieces[i, j] != null)
+					{
+                        totalPiecesNum++;
+
+                        if (pieces[i, j].Color == PieceColor.White)
+							whitePiecesNum[pieces[i, j].Type]++;
+                        else
+							blackPiecesNum[pieces[i, j].Type]++;
+                    }
+                }
+            }
+        }
+
+		protected byte GetPiecesNum(ChessPieceType pieceType, PieceColor color)
+		{
+            if (color == PieceColor.White)
+                return whitePiecesNum[pieceType];
+            else
+                return blackPiecesNum[pieceType];
+        }
+
+		protected bool IsFiftyMoveRule() => (fiftyMoveRuleCounter / 2) >= 50;
 	}
 }

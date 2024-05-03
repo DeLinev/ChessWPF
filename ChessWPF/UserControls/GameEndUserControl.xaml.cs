@@ -39,6 +39,12 @@ namespace ChessWPF.UserControls
                 case PossibleEndings.TimerIsOver:
                     ReasonTextBlock.Text = "час вичерпано";
                     break;
+				case PossibleEndings.InsuffMaterial:
+					ReasonTextBlock.Text = "недостатня кількість фігур";
+					break;
+				case PossibleEndings.FiftyMoveRule:
+					ReasonTextBlock.Text = "правило 50 ходів";
+					break;
             }
 		}
 

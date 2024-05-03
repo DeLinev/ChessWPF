@@ -8,6 +8,8 @@
         protected RegularMove kingMove;
         protected RegularMove rookMove;
 
+        public override bool IsCapture => false;
+
         public CastlingMove(PositionChanges posChange, Position kingPosition)
         {
             StartPosition = kingPosition;

@@ -2,7 +2,10 @@
 {
     public abstract class MoveBase
 	{
-		public Position StartPosition { get; protected set; }
+        protected PieceBase capturedPiece;
+
+		public virtual bool IsCapture { get => capturedPiece != null; }
+        public Position StartPosition { get; protected set; }
 		public Position EndPosition { get; protected set; }
 
 		public MoveBase(Position start, Position end)

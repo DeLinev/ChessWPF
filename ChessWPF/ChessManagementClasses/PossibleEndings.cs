@@ -10,6 +10,8 @@ namespace ChessManagementClasses
 	{
 		CheckMate,
 		StaleMate,
-		TimerIsOver
+		TimerIsOver,
+		InsuffMaterial,
+		FiftyMoveRule
 	}
 }
