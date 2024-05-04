@@ -34,7 +34,7 @@
             
             <Button x:Name="FriendGameButton" Style="{StaticResource MenuButtonStyle}" Grid.Column="2" Grid.Row="2" 
                 Content="Грати з другом" Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" Foreground="#FF080808" Click="FriendGameButton_Click" />
-            <Button x:Name="ComputerGameButton" Style="{StaticResource MenuButtonStyle}" Grid.Column="2" Grid.Row="3" 
+            <Button x:Name="ComputerGameButton" Style="{StaticResource MenuButtonStyle}" Grid.Column="2" Grid.Row="3" Click="ComputerGameButton_Click"
                 Content="Грати з комп'ютером" Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" />
 
             <Grid Grid.ColumnSpan="5" Grid.RowSpan="6">

@@ -14,14 +14,14 @@
         {
             pawnMove = new RegularMove(StartPosition, EndPosition);
             pawnMove.MakeMove(board);
-            capturedPiece = board.GetPiece(capturedPawnPosition);
+            CapturedPiece = board.GetPiece(capturedPawnPosition);
             board.SetPiece(capturedPawnPosition, null);
         }
 
         public override void ReverseMove(Board board)
         {
             pawnMove.ReverseMove(board);
-            board.SetPiece(capturedPawnPosition, capturedPiece);
+            board.SetPiece(capturedPawnPosition, CapturedPiece);
         }
     }
 }

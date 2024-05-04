@@ -2,9 +2,8 @@
 {
     public abstract class MoveBase
 	{
-        protected PieceBase capturedPiece;
-
-		public virtual bool IsCapture { get => capturedPiece != null; }
+        public PieceBase CapturedPiece { get; protected set; }
+		public virtual bool IsCapture { get => CapturedPiece != null; }
         public Position StartPosition { get; protected set; }
 		public Position EndPosition { get; protected set; }
 

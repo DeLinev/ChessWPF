@@ -23,11 +23,12 @@ namespace ChessWPF.UserControls
         protected List<MoveBase> possibleMoves;
 
         public bool IsTimerEnabled { get; set; } = true;
-        public ChessTimer TimerWhite { get; protected set;}
+        public bool IsComputerEnabled { get; }
+        public ChessTimer TimerWhite { get; protected set; }
         public ChessTimer TimerBlack { get; protected set; }
         public Board Board { get => board; }
 
-        public GameUserControl(Button btn)
+        public GameUserControl(Button btn, bool isComputerEnabled = false)
         {
             InitializeComponent();
             StatusTextBlock.Text = "Хід білих";
@@ -42,6 +43,7 @@ namespace ChessWPF.UserControls
             mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
             mediaPlayer.Play();
             mediaPlayer.Stop();
+            IsComputerEnabled = isComputerEnabled;
 
             TimerWhite = new ChessTimer();
             TimerWhite.SetInterval(new TimeSpan(0, 0, 1));
@@ -51,10 +53,10 @@ namespace ChessWPF.UserControls
             TimerBlack.SetInterval(new TimeSpan(0, 0, 1));
             TimerBlack.SetTick(TimerTick);
 
-            TimerWhiteTextBlock.Text = TimerWhite.Time;
-            TimerBlackTextBlock.Text = TimerBlack.Time;
-
-            OverlayMenu.Content = new TimerUserControl(this);
+            if (!IsComputerEnabled)
+                OverlayMenu.Content = new TimerUserControl(this);
+            else
+                IsTimerEnabled = false;
         }
 
         protected void DrawPieces()
@@ -81,8 +83,8 @@ namespace ChessWPF.UserControls
 
             Point mousePosition = e.GetPosition(grid);
 
-            if (mousePosition.X > BoardGrid.ActualWidth 
-                || mousePosition.Y < StatusTextBlock.ActualHeight 
+            if (mousePosition.X > BoardGrid.ActualWidth
+                || mousePosition.Y < StatusTextBlock.ActualHeight
                 || OverlayMenu.Content != null)
                 return;
 
@@ -121,16 +123,12 @@ namespace ChessWPF.UserControls
                         {
                             // Handle move if it is not a Promotion move
                             ManageMove(move);
-                            MoveToList(move);
+                            //MoveToList(move);
 
                             if (IsPawnDoubleMove(move))
-                                board.EnPassantPosition = new Position((move.StartPosition.Rank + move.EndPosition.Rank) / 2, 
+                                board.EnPassantPosition = new Position((move.StartPosition.Rank + move.EndPosition.Rank) / 2,
                                     move.StartPosition.File);
                         }
-
-                        // Play sound
-                        mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
-                        mediaPlayer.Play();
 
                         if (IsTimerEnabled)
                         {
@@ -148,20 +146,21 @@ namespace ChessWPF.UserControls
 
                         // Check if the game is over
                         if (board.GameOver != null)
+                            EndGame(board.GameOver);
+                        else if (IsComputerEnabled)
                         {
-                            string winner = board.GameOver.Winner == PieceColor.White ? "Білі" : "Чорні";
-                            string ending = board.GameOver.Ending == PossibleEndings.CheckMate ? "Мат" : "Пат";
+                            DispatcherTimer timer = new();
+                            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                            timer.Tick += (object? sender, EventArgs e) =>
+                            {
+                                ComputerMove computerMove = new ComputerMove();
+                                ManageMove(computerMove);
+                                timer.Stop();
+                            };
+                            timer.Start();
 
-                            if (board.GameOver.Winner == null)
-                                StatusTextBlock.Text = "Нічия через " + ending;
-                            else
-                                StatusTextBlock.Text = winner + " перемогли через " + ending;
-
-                            GameEndUserControl gameEndMenu = new GameEndUserControl(this);
-                            OverlayMenu.Content = gameEndMenu;
-                            
-                            TimerWhite.Stop();
-                            TimerBlack.Stop();
+                            if (board.GameOver != null)
+                                EndGame(board.GameOver);
                         }
 
                         break;
@@ -169,7 +168,6 @@ namespace ChessWPF.UserControls
                 }
 
                 ClearOverlayGrid();
-
             }
             else
             {
@@ -197,9 +195,23 @@ namespace ChessWPF.UserControls
         public void ManageMove(MoveBase move)
         {
             board.Move(move);
+            MoveToList(move);
+            mediaPlayer.Open(new Uri("../../../Assets/SFX/MoveSound.mp3", UriKind.Relative));
+            mediaPlayer.Play();
             BoardGrid.Children.Clear();
             DrawPieces();
             StatusTextBlock.Text = board.CurrentPlayer == PieceColor.White ? "Хід білих" : "Хід чорних";
+        }
+
+        protected void EndGame(GameOver info)
+        {
+            StatusTextBlock.Text = "Кінець гри!";
+
+            GameEndUserControl gameEndMenu = new GameEndUserControl(this);
+            OverlayMenu.Content = gameEndMenu;
+
+            TimerWhite.Stop();
+            TimerBlack.Stop();
         }
 
         protected void AddToOverlayGrid()
@@ -272,7 +284,7 @@ namespace ChessWPF.UserControls
                 movesCount++;
                 stackPanel.Children.Add(moveNumber);
             }
-            
+
             if (piece is Pawn || move is PromotionMove || move is CastlingMove)
                 moveText.Margin = new Thickness(5, 0, 0, 0);
             else
@@ -283,7 +295,7 @@ namespace ChessWPF.UserControls
 
             moveText.VerticalAlignment = VerticalAlignment.Center;
 
-            if (move is RegularMove && (move as RegularMove).IsCapture || move is EnPassantMove)
+            if (move.IsCapture)
             {
                 if (piece is Pawn)
                     moveText.Text = move.StartPosition.GetFileLetter();
@@ -299,7 +311,7 @@ namespace ChessWPF.UserControls
             if (move is CastlingMove)
                 moveText.Text = (move as CastlingMove).castlingDirection == PositionChanges.Right ? "0-0" : "0-0-0";
 
-            if (board.GameOver != null)
+            if (board.GameOver != null && board.GameOver.Ending == PossibleEndings.CheckMate)
                 moveText.Text += "#";
             else if (piece.IsThreatToKing(board, move.EndPosition))
                 moveText.Text += "+";
@@ -418,10 +430,17 @@ namespace ChessWPF.UserControls
             {
                 OverlayMenu.Content = null;
 
-                if (board.CurrentPlayer == PieceColor.White)
-                    TimerWhite.Start();
-                else
-                    TimerBlack.Start();
+                if (IsTimerEnabled)
+                {
+                    if (board.CurrentPlayer == PieceColor.White)
+                        TimerWhite.Start();
+                    else
+                        TimerBlack.Start();
+                }
+            }
+            else if (OverlayMenu.Content != null)
+            {
+                return;
             }
             else
             {

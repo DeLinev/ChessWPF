@@ -35,7 +35,7 @@
 		public override void MakeMove(Board board)
 		{
 			PieceBase piece = board.GetPiece(StartPosition);
-			capturedPiece = board.GetPiece(EndPosition);
+			CapturedPiece = board.GetPiece(EndPosition);
 
 			PieceBase selectedPiece = Promote(piece.Color);
 			board.SetPiece(EndPosition, selectedPiece);
@@ -50,7 +50,7 @@
 			piece.HasMoved = true;
 
 			board.SetPiece(StartPosition, piece);
-			board.SetPiece(EndPosition, capturedPiece);
+			board.SetPiece(EndPosition, CapturedPiece);
 		}
 
 		protected PieceBase Promote(PieceColor color)

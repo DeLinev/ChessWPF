@@ -7,7 +7,7 @@
 		public override void MakeMove(Board board)
 		{
 			PieceBase piece = board.GetPiece(StartPosition);
-			capturedPiece = board.GetPiece(EndPosition);
+			CapturedPiece = board.GetPiece(EndPosition);
 
 			board.SetPiece(EndPosition, piece);
 			board.SetPiece(StartPosition, null);
@@ -20,7 +20,7 @@
 			PieceBase piece = board.GetPiece(EndPosition);
 
 			board.SetPiece(StartPosition, piece);
-			board.SetPiece(EndPosition, capturedPiece);
+			board.SetPiece(EndPosition, CapturedPiece);
 
 			piece.HasMoved = piece.PreviousHasMoved;
 		}

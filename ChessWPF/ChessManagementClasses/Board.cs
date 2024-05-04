@@ -78,7 +78,7 @@ namespace ChessManagementClasses
 			pieces[7, 4] = new King(PieceColor.White);
 		}
 
-		public bool IsPositionEmpty(Position position)
+        public bool IsPositionEmpty(Position position)
 		{
 			return GetPiece(position) == null;
 		}
@@ -263,5 +263,12 @@ namespace ChessManagementClasses
         }
 
 		protected bool IsFiftyMoveRule() => (fiftyMoveRuleCounter / 2) >= 50;
+
+		public void ReverseMove(MoveBase move)
+		{
+            move.ReverseMove(this);
+            currentPlayer = currentPlayer == PieceColor.White ? PieceColor.Black : PieceColor.White;
+			GameOver = null;
+        }
 	}
 }

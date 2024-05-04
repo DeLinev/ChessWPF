@@ -27,11 +27,11 @@
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock x:Name="StatusTextBlock" Width="200"></TextBlock>
-                <TextBlock x:Name="TimerWhiteTextBlock" FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
+                <TextBlock x:Name="TimerWhiteTextBlock" Text="--:--" FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
                         FontSize="18" Padding="299,0,0,0"></TextBlock>
                 <TextBlock Text="/" FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
                         FontSize="18"></TextBlock>
-                <TextBlock x:Name="TimerBlackTextBlock" FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
+                <TextBlock x:Name="TimerBlackTextBlock" Text="--:--" FontFamily="/Fonts/Roboto-Bold.ttf #Roboto" 
                         FontSize="18"></TextBlock>
             </StackPanel>
 

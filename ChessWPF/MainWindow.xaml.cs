@@ -20,19 +20,19 @@ namespace ChessWPF
 		public MainWindow()
 		{
 			InitializeComponent();
-			this.contentControl.Content = new MenuUserControl();
+			contentControl.Content = new MenuUserControl();
 		}
 
 		private void FriendGameButton_Click(object sender, RoutedEventArgs e)
 		{
-			this.contentControl.Content = new GameUserControl(MainMenuButton);
+            contentControl.Content = new GameUserControl(MainMenuButton);
 			FriendGameButton.Visibility = Visibility.Hidden;
 			ComputerGameButton.Visibility = Visibility.Hidden;
 		}
 
 		private void MainMenuButton_Click(object sender, RoutedEventArgs e)
 		{
-			this.contentControl.Content = new MenuUserControl();
+			contentControl.Content = new MenuUserControl();
 			FriendGameButton.Visibility = Visibility.Visible;
 			ComputerGameButton.Visibility = Visibility.Visible;
 			MainMenuButton.Visibility = Visibility.Hidden;
@@ -42,6 +42,13 @@ namespace ChessWPF
         {
 			if (contentControl.Content is GameUserControl && e.Key == Key.Escape)
 				(contentControl.Content as GameUserControl).TogglePauseMenu();
+        }
+
+        private void ComputerGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            contentControl.Content = new GameUserControl(MainMenuButton, true);
+            FriendGameButton.Visibility = Visibility.Hidden;
+            ComputerGameButton.Visibility = Visibility.Hidden;
         }
     }
 }
