@@ -6,6 +6,8 @@
 
 		public Queen(PieceColor color) : base(color) { }
 
+		public Queen(Queen q) : base(q) { }
+
 		public override List<MoveBase> GetPossibleMoves(Board board, Position position)
 		{
 			List<MoveBase> moves = new List<MoveBase>();

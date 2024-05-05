@@ -16,5 +16,11 @@ namespace ChessManagementClasses
 			Winner = winner;
 			Ending = ending;
 		}
+
+		public GameOver(GameOver other)
+		{
+            Winner = other.Winner;
+            Ending = other.Ending;
+        }
 	}
 }

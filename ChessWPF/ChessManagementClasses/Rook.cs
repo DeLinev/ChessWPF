@@ -6,6 +6,8 @@
 
 		public Rook(PieceColor color) : base(color) { }
 
+		public Rook(Rook r) : base(r) { }
+
 		public override List<MoveBase> GetPossibleMoves(Board board, Position position)
 		{
 			List<MoveBase> moves = new List<MoveBase>();

@@ -23,31 +23,29 @@
 
         public override void MakeMove(Board board)
         {
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    PieceBase piece = board.GetPiece(new Position(i, j));
-
-                    if (piece != null && piece.Color == board.CurrentPlayer)
-                        possibleMoves.AddRange(board.GetPossibleMoves(new Position(i, j)));
-                }
-            }
+            possibleMoves = GetMoves(board);
 
             MoveBase chosenMove = null;
             int bestScore = int.MinValue;
+            int alpha = int.MinValue;
+            int beta = int.MaxValue;
 
             foreach (MoveBase move in possibleMoves)
             {
-                move.MakeMove(board);
-                int score = Evaluate(board);
-                move.ReverseMove(board);
+                Board boardCopy = new Board(board);
+                boardCopy.Move(move);
+                int score = Minimax(boardCopy, 2, alpha, beta, false);
 
                 if (score > bestScore)
                 {
                     bestScore = score;
                     chosenMove = move;
                 }
+
+                alpha = Math.Max(alpha, bestScore);
+
+                if (beta <= alpha)
+                    break;
             }
 
             BestMove = chosenMove;
@@ -60,43 +58,121 @@
             bestMove.ReverseMove(board);
         }
 
+        private int Minimax(Board board, int depth, int alpha, int beta, bool maximizingPlayer)
+        {
+            if (depth == 0 || board.GameOver != null)
+                return Evaluate(board);
+
+            if (maximizingPlayer)
+            {
+                int maxScore = int.MinValue;
+                List<MoveBase> moves = GetMoves(board);
+
+                foreach (MoveBase move in moves)
+                {
+                    Board boardCopy = new Board(board);
+                    boardCopy.Move(move);
+                    int score = Minimax(boardCopy, depth - 1, alpha, beta, false);
+                    maxScore = Math.Max(maxScore, score);
+                    alpha = Math.Max(alpha, score);
+                    if (beta <= alpha)
+                        break;
+                }
+
+                return maxScore;
+            }
+            else
+            {
+                int minScore = int.MaxValue;
+                List<MoveBase> moves = GetMoves(board);
+
+                foreach (MoveBase move in moves)
+                {
+                    Board boardCopy = new Board(board);
+                    boardCopy.Move(move);
+                    int score = Minimax(boardCopy, depth - 1, alpha, beta, true);
+                    minScore = Math.Min(minScore, score);
+                    beta = Math.Min(beta, score);
+                    if (beta <= alpha)
+                        break;
+                }
+
+                return minScore;
+            }
+        }
+
         protected int Evaluate(Board board)
         {
-            Dictionary<ChessPieceType, int> pieceValues = new Dictionary<ChessPieceType, int>
-            {
-                { ChessPieceType.Pawn, 1 },
-                { ChessPieceType.Knight, 3 },
-                { ChessPieceType.Bishop, 3 },
-                { ChessPieceType.Rook, 5 },
-                { ChessPieceType.Queen, 9 },
-                { ChessPieceType.King, 100 }
-            };
-
             int score = 0;
 
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    Position position = new Position(i, j);
+                    PieceBase piece = board.GetPiece(new Position(i, j));
 
-                    if (board.IsPositionEmpty(position))
-                        continue;
-
-                    PieceBase piece = board.GetPiece(position);
-                    int value = pieceValues[piece.Type];
-
-                    score += piece.Color == board.CurrentPlayer ? value : -value;
-
-                    if (piece.Type == ChessPieceType.Pawn || piece.Type == ChessPieceType.Knight)
+                    if (piece != null)
                     {
-                        if (i >= 3 && i <= 5 && j >= 3 && j <= 5)
-                            score += piece.Color == board.CurrentPlayer ? 1 : -1;
+                        if (piece.Color == PieceColor.Black)
+                        {
+                            switch (piece.Type)
+                            {
+                                case ChessPieceType.Pawn:
+                                    score += 1;
+                                    break;
+                                case ChessPieceType.Knight:
+                                case ChessPieceType.Bishop:
+                                    score += 3;
+                                    break;
+                                case ChessPieceType.Rook:
+                                    score += 5;
+                                    break;
+                                case ChessPieceType.Queen:
+                                    score += 9;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (piece.Type)
+                            {
+                                case ChessPieceType.Pawn:
+                                    score -= 1;
+                                    break;
+                                case ChessPieceType.Knight:
+                                case ChessPieceType.Bishop:
+                                    score -= 3;
+                                    break;
+                                case ChessPieceType.Rook:
+                                    score -= 5;
+                                    break;
+                                case ChessPieceType.Queen:
+                                    score -= 9;
+                                    break;
+                            }
+                        }
                     }
                 }
             }
 
             return score;
+        }
+
+        protected List<MoveBase> GetMoves(Board board)
+        {
+            List<MoveBase> moves = new List<MoveBase>();
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    PieceBase piece = board.GetPiece(new Position(i, j));
+
+                    if (piece != null && piece.Color == board.CurrentPlayer)
+                        moves.AddRange(board.GetPossibleMoves(new Position(i, j)));
+                }
+            }
+
+            return moves;
         }
     }
 }

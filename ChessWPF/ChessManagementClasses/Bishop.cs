@@ -6,7 +6,9 @@
 
 		public Bishop(PieceColor color) : base(color) { }
 
-		public override List<MoveBase> GetPossibleMoves(Board board, Position position)
+        public Bishop(Bishop b) : base(b) { }
+
+        public override List<MoveBase> GetPossibleMoves(Board board, Position position)
 		{
 			List<MoveBase> moves = new List<MoveBase>();
 

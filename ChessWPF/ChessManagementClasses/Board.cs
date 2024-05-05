@@ -38,7 +38,27 @@ namespace ChessManagementClasses
 			fiftyMoveRuleCounter = 0;
 		}
 
-		public PieceBase GetPiece(Position position)
+        public Board(Board other)
+        {
+			for (int i = 0; i < 8; i++)
+			{
+				for (int j = 0; j < 8; j++)
+				{
+					if (other.pieces[i, j] != null)
+						pieces[i, j] = other.pieces[i, j].Clone();
+				}
+			}
+
+            currentPlayer = other.currentPlayer;
+            whitePiecesNum = new Dictionary<ChessPieceType, byte>(other.whitePiecesNum);
+            blackPiecesNum = new Dictionary<ChessPieceType, byte>(other.blackPiecesNum);
+            totalPiecesNum = other.totalPiecesNum;
+            fiftyMoveRuleCounter = other.fiftyMoveRuleCounter;
+            EnPassantPosition = other.EnPassantPosition != null ? new Position(other.EnPassantPosition) : null;
+            GameOver = other.GameOver != null ? new GameOver(other.GameOver) : null;
+        }
+
+        public PieceBase GetPiece(Position position)
 		{
 			return pieces[position.Rank, position.File];
 		}

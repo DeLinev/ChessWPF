@@ -5,8 +5,9 @@
 		public override ChessPieceType Type => ChessPieceType.King;
 
 		public King(PieceColor color) : base(color) { }
+        public King(King k) : base(k) { }
 
-		public override List<MoveBase> GetPossibleMoves(Board board, Position position)
+        public override List<MoveBase> GetPossibleMoves(Board board, Position position)
 		{
 			List<MoveBase> moves = new List<MoveBase>();
 			Position current;

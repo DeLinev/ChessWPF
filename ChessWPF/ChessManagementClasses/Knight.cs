@@ -6,6 +6,8 @@
 
 		public Knight(PieceColor color) : base(color) { }
 
+		public Knight(Knight k) : base(k) { }
+
 		public override List<MoveBase> GetPossibleMoves(Board board, Position position)
 		{
 			List<MoveBase> moves = new List<MoveBase>();

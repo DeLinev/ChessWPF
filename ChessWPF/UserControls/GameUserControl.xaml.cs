@@ -150,7 +150,7 @@ namespace ChessWPF.UserControls
                         else if (IsComputerEnabled)
                         {
                             DispatcherTimer timer = new();
-                            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
                             timer.Tick += (object? sender, EventArgs e) =>
                             {
                                 ComputerMove computerMove = new ComputerMove();

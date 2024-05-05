@@ -6,6 +6,8 @@
 
         public Pawn(PieceColor color) : base(color) { }
 
+        public Pawn(Pawn p) : base(p) { }
+
         public override List<MoveBase> GetPossibleMoves(Board board, Position position)
         {
             List<MoveBase> moves = new List<MoveBase>();

@@ -23,6 +23,34 @@
             Color = color;
         }
 
+        public PieceBase(PieceBase other)
+        {
+            Color = other.Color;
+            hasMoved = other.hasMoved;
+            previeousHasMoved = other.previeousHasMoved;
+        }
+
+        public PieceBase Clone()
+        {
+            switch(Type)
+            {
+                case ChessPieceType.Pawn:
+                    return new Pawn(this as Pawn);
+                case ChessPieceType.Rook:
+                    return new Rook(this as Rook);
+                case ChessPieceType.Knight:
+                    return new Knight(this as Knight);
+                case ChessPieceType.Bishop:
+                    return new Bishop(this as Bishop);
+                case ChessPieceType.Queen:
+                    return new Queen(this as Queen);
+                case ChessPieceType.King:
+                    return new King(this as King);
+                default:
+                    throw new Exception("Invalid piece type");
+            }
+        }
+
         public abstract List<MoveBase> GetPossibleMoves(Board board, Position current);
 
         public virtual bool IsThreatToKing(Board board, Position current)
