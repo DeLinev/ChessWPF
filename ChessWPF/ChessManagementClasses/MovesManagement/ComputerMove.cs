@@ -103,6 +103,16 @@
 
         protected int Evaluate(Board board)
         {
+            Dictionary<ChessPieceType, int> pieceValues = new Dictionary<ChessPieceType, int>
+            {
+                { ChessPieceType.Pawn, 1 },
+                { ChessPieceType.Knight, 3 },
+                { ChessPieceType.Bishop, 3 },
+                { ChessPieceType.Rook, 5 },
+                { ChessPieceType.Queen, 9 },
+                { ChessPieceType.King, 100 }
+            };
+
             int score = 0;
 
             for (int i = 0; i < 8; i++)
@@ -113,12 +123,15 @@
 
                     if (piece != null)
                     {
+
                         if (piece.Color == PieceColor.Black)
                         {
                             switch (piece.Type)
                             {
                                 case ChessPieceType.Pawn:
                                     score += 1;
+                                    if (i >= 3 && i <= 4 && j >= 3 && j <= 4)
+                                        score += 2;
                                     break;
                                 case ChessPieceType.Knight:
                                 case ChessPieceType.Bishop:
@@ -138,6 +151,8 @@
                             {
                                 case ChessPieceType.Pawn:
                                     score -= 1;
+                                    if (i >= 3 && i <= 4 && j >= 3 && j <= 4)
+                                        score -= 2;
                                     break;
                                 case ChessPieceType.Knight:
                                 case ChessPieceType.Bishop:
