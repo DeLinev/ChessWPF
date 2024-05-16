@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ChessManagementClasses.Board">
+    <Position X="1" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAhFAABIBMABIIAAAQAEAAAAAKIACwAAAAgAAAAAA=</HashCode>
+      <FileName>ChessManagementClasses\Board.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ChessManagementClasses.ChessTimer">
+    <Position X="3.25" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>ABSAAAAAACBAFAAAQAAAAAAAAAAAACAAIAABAAAAAQA=</HashCode>
+      <FileName>ChessManagementClasses\ChessTimer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ChessManagementClasses.GameOver">
+    <Position X="7.25" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>ChessManagementClasses\GameOver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ChessManagementClasses.Position">
+    <Position X="5.25" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>EAABAIAAAAAAAAAEgAAAAAAAAAAEAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessManagementClasses\Position.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="ChessManagementClasses.PositionChanges">
+    <Position X="5.25" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAQAgIAAAAAAAAAAAAAAAAAAAAAAAAACACAIAABAAI=</HashCode>
+      <FileName>ChessManagementClasses\PositionChanges.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ChessManagementClasses.PossibleEndings">
+    <Position X="1" Y="6.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAEAAAAIACAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessManagementClasses\PossibleEndings.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

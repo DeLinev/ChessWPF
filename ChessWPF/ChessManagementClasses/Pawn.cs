@@ -26,19 +26,15 @@
                 dirs = [PositionChanges.DownLeft, PositionChanges.DownRight];
             }
 
-            //Adds possible move for the Up direction
-
             current = position.ChangePosition(dir);
             if (Board.IsPositionValid(current) && board.IsPositionEmpty(current))
                 SelectMove(position, current, moves);
 
-            // Adds possible move for the Upx2 direction
             Position oneStep = position.ChangePosition(dir);
             current = position.ChangePosition(dir, 2);
             if (Board.IsPositionValid(current) && board.IsPositionEmpty([current, oneStep]) && !HasMoved)
                 moves.Add(new RegularMove(position, current));
 
-            // Adds possible moves for diagonals direction
             foreach (PositionChanges direction in dirs)
             {
                 current = position.ChangePosition(direction);
@@ -58,7 +54,7 @@
 
         protected void SelectMove(Position position, Position current, List<MoveBase> moves)
         {
-            if (Color == PieceColor.White ? current.Rank == 0 : current.Rank == 7) // Promotion
+            if (Color == PieceColor.White ? current.Rank == 0 : current.Rank == 7)
                 moves.Add(new PromotionMove(position, current));
             else
                 moves.Add(new RegularMove(position, current));

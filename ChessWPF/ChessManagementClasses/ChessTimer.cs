@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
+﻿using System.Windows.Threading;
 
 namespace ChessManagementClasses
 {
-    public class ChessTimer
+	public class ChessTimer
     {
         protected DispatcherTimer timer;
         protected int initialMinutes;
