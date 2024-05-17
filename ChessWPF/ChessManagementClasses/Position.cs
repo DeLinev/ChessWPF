@@ -17,6 +17,17 @@
 			File = obj.File;
 		}
 
+		public Position(string position)
+		{
+			if (position.Length != 2)
+				throw new Exception("Invalid position string");
+
+			char[] files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+			File = Array.IndexOf(files, position[0]);
+			Rank = 8 - int.Parse(position[1].ToString());
+		}
+
 		public Position ChangePosition(PositionChanges change, int k = 1)
 		{
 			switch (change)

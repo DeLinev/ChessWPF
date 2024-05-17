@@ -33,6 +33,7 @@ namespace ChessManagementClasses
             }
         }
         public string Time { get => string.Format("{0:00}:{1:00}", Minutes, Seconds); }
+        public string InitialTime { get => string.Format("{0:00}:{1:00}", initialMinutes, initialSeconds); }
 
         public ChessTimer()
         {
@@ -56,6 +57,25 @@ namespace ChessManagementClasses
             initialMinutes = minutes;
             initialSeconds = seconds;
         }
+
+        public void SetTime(string currentTime, string initialTime)
+        {
+			string[] currTimeParts = currentTime.Split(':');
+            string[] initTimeParts = initialTime.Split(':');
+
+			int min, sec, initMin, initSec;
+
+			if (int.TryParse(currTimeParts[0], out min) && int.TryParse(currTimeParts[1], out sec) 
+                && int.TryParse(initTimeParts[0], out initMin) && int.TryParse(initTimeParts[1], out initSec))
+			{
+				Minutes = min;
+				Seconds = sec;
+                initialMinutes = initMin;
+                initialSeconds = initSec;
+			}
+			else
+				throw new Exception("Invalid time format");
+		}
 
         public void HandleTimer()
         {

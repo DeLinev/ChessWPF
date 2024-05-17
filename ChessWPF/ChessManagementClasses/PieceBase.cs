@@ -81,5 +81,34 @@
 
             yield break;
         }
+
+        public char GetPieceChar()
+        {
+            char pieceChar = ' ';
+
+            switch (Type)
+            {
+                case ChessPieceType.Pawn:
+					pieceChar = 'p';
+					break;
+                case ChessPieceType.Rook:
+                    pieceChar = 'r';
+                    break;
+                case ChessPieceType.Knight:
+					pieceChar = 'n';
+					break;
+                case ChessPieceType.Bishop:
+                    pieceChar = 'b';
+                    break;
+                case ChessPieceType.Queen:
+					pieceChar = 'q';
+					break;
+                case ChessPieceType.King:
+					pieceChar = 'k';
+					break;
+            }
+
+            return Color == PieceColor.White ? char.ToUpper(pieceChar) : pieceChar;
+        }
     }
 }

@@ -92,6 +92,121 @@
 			pieces[7, 4] = new King(PieceColor.White);
 		}
 
+		public void SetBoard(string fenStr)
+		{
+			pieces = new PieceBase[8, 8];
+
+			string board = fenStr.Split(' ')[0];
+			string currPl = fenStr.Split(' ')[1];
+			string castling = fenStr.Split(' ')[2];
+			string enPassant = fenStr.Split(' ')[3];
+
+			int rank = -1;
+
+			foreach (string row in board.Split('/'))
+			{
+				int file = 0;
+				rank++;
+
+				foreach (char c in row)
+				{
+					if (char.IsDigit(c))
+					{
+						file += int.Parse(c.ToString());
+						continue;
+					}
+
+					PieceBase piece = null;
+
+					switch (c)
+					{
+						case 'p':
+							piece = new Pawn(PieceColor.Black);
+
+							if (rank != 1)
+								piece.HasMoved = true;
+
+							break;
+						case 'r':
+							piece = new Rook(PieceColor.Black);
+							piece.HasMoved = true;
+							break;
+						case 'n':
+							piece = new Knight(PieceColor.Black);
+							break;
+						case 'b':
+							piece = new Bishop(PieceColor.Black);
+							break;
+						case 'q':
+							piece = new Queen(PieceColor.Black);
+							break;
+						case 'k':
+							piece = new King(PieceColor.Black);
+							piece.HasMoved = true;
+							break;
+						case 'P':
+							piece = new Pawn(PieceColor.White);
+
+							if (rank != 6)
+								piece.HasMoved = true;
+
+							break;
+						case 'R':
+							piece = new Rook(PieceColor.White);
+							piece.HasMoved = true;
+							break;
+						case 'N':
+							piece = new Knight(PieceColor.White);
+							break;
+						case 'B':
+							piece = new Bishop(PieceColor.White);
+							break;
+						case 'Q':
+							piece = new Queen(PieceColor.White);
+							break;
+						case 'K':
+							piece = new King(PieceColor.White);
+							piece.HasMoved = true;
+							break;
+					}
+
+					if (piece != null)
+					{
+						pieces[rank, file % 8] = piece;
+						file++;
+					}
+				}
+			}
+
+			currentPlayer = currPl == "w" ? PieceColor.White : PieceColor.Black;
+
+			foreach (char c in castling)
+			{
+				switch (c)
+				{
+					case 'K':
+						pieces[7, 7].HasMoved = false;
+						pieces[7, 4].HasMoved = false;
+						break;
+					case 'Q':
+						pieces[7, 0].HasMoved = false;
+						pieces[7, 4].HasMoved = false;
+						break;
+					case 'k':
+						pieces[0, 7].HasMoved = false;
+						pieces[0, 4].HasMoved = false;
+						break;
+					case 'q':
+						pieces[0, 0].HasMoved = false;
+						pieces[0, 4].HasMoved = false;
+						break;
+				}
+			}
+
+			if (enPassant != "-")
+				EnPassantPosition = new Position(enPassant);
+		}
+
         public bool IsPositionEmpty(Position position)
 		{
 			return GetPiece(position) == null;
@@ -278,11 +393,124 @@
 
 		protected bool IsFiftyMoveRule() => (fiftyMoveRuleCounter / 2) >= 50;
 
-		public void ReverseMove(MoveBase move)
+		public string GetFenString()
 		{
-            move.ReverseMove(this);
-            currentPlayer = currentPlayer == PieceColor.White ? PieceColor.Black : PieceColor.White;
-			GameOver = null;
-        }
+			string fnStr = "";
+
+			for (int i = 0; i < 8; i++)
+			{
+				if (i != 0)
+					fnStr += "/";
+
+				int emptyCount = 0;
+
+				for (int j = 0; j < 8; j++)
+				{
+					if (pieces[i, j] == null)
+					{
+						emptyCount++;
+						continue;
+					}
+
+					if (emptyCount > 0)
+					{
+						fnStr += emptyCount.ToString();
+						emptyCount = 0;
+					}
+
+					fnStr += pieces[i, j].GetPieceChar();
+				}
+
+				if (emptyCount > 0)
+					fnStr += emptyCount.ToString();
+			}
+
+			fnStr += " ";
+			
+			if (currentPlayer == PieceColor.White)
+				fnStr += "w";
+			else
+				fnStr += "b";
+
+			fnStr += " ";
+			
+			bool canWCastleR = CanCastleRight(PieceColor.White);
+			bool canWCastleL = CanCastleLeft(PieceColor.White);
+			bool canBCastleR = CanCastleRight(PieceColor.Black);
+			bool canBCastleL = CanCastleLeft(PieceColor.Black);
+
+			if (canWCastleR || canWCastleL || canBCastleR || canBCastleL)
+			{
+				if (canWCastleR)
+					fnStr += "K";
+				if (canWCastleL)
+					fnStr += "Q";
+				if (canBCastleR)
+					fnStr += "k";
+				if (canBCastleL)
+					fnStr += "q";
+			}
+			else
+				fnStr += "-";
+
+			fnStr += " ";
+			
+			if (EnPassantPosition != null)
+				fnStr += EnPassantPosition.ToString();
+			else
+				fnStr += "-";
+
+			return fnStr;
+		}
+
+		protected bool CanCastleRight(PieceColor color)
+		{
+			Position rookPosition;
+			Position kingPosition;
+
+			if (color == PieceColor.White)
+			{
+				rookPosition = new Position(7, 7);
+				kingPosition = new Position(7, 4);
+			}
+			else
+			{
+				rookPosition = new Position(0, 7);
+				kingPosition = new Position(7, 4);
+			}
+
+			if (IsPositionEmpty(rookPosition) || GetPiece(rookPosition).HasMoved)
+				return false;
+
+			if (IsPositionEmpty(kingPosition) || GetPiece(kingPosition).HasMoved)
+				return false;
+
+			return true;
+		}
+
+		protected bool CanCastleLeft(PieceColor color)
+		{
+			Position rookPosition;
+			Position kingPosition;
+
+			if (color == PieceColor.White)
+			{
+				rookPosition = new Position(7, 0);
+				kingPosition = new Position(7, 4);
+			}
+			else
+			{
+				rookPosition = new Position(0, 0);
+				kingPosition = new Position(0, 4);
+			}
+
+			if (IsPositionEmpty(rookPosition) || GetPiece(rookPosition).HasMoved)
+				return false;
+
+			if (IsPositionEmpty(kingPosition) || GetPiece(kingPosition).HasMoved)
+				return false;
+
+			return true;
+		}
 	}
 }
