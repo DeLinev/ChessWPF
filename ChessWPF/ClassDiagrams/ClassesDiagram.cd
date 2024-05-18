@@ -3,14 +3,14 @@
   <Class Name="ChessManagementClasses.Board">
     <Position X="1" Y="0.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAhFAABIBMABIIAAAQAEAAAAAKIACwAAAAgAAAAAA=</HashCode>
+      <HashCode>AAAAhNAABIBMABIIAIAQAEAAAAgCIACwAAAAgAAAAAA=</HashCode>
       <FileName>ChessManagementClasses\Board.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ChessManagementClasses.ChessTimer">
     <Position X="3.25" Y="0.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>ABSAAAAAACBAFAAAQAAAAAAAAAAAACAAIAABAAAAAQA=</HashCode>
+      <HashCode>ABSAAAAAACBAFAAAQAAAAQAAAAAAACAAIAABAAAAAQA=</HashCode>
       <FileName>ChessManagementClasses\ChessTimer.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -36,7 +36,7 @@
     </TypeIdentifier>
   </Enum>
   <Enum Name="ChessManagementClasses.PossibleEndings">
-    <Position X="1" Y="6.75" Width="2" />
+    <Position X="1" Y="7.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAEAAAAIACAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessManagementClasses\PossibleEndings.cs</FileName>

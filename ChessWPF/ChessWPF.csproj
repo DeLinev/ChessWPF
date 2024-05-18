@@ -17,6 +17,7 @@
     <None Remove="Assets\BlackRook.png" />
     <None Remove="Assets\ChessBoard.png" />
     <None Remove="Assets\ChessLogo.png" />
+    <None Remove="Assets\Draw.png" />
     <None Remove="Assets\icon.png" />
     <None Remove="Assets\SFX\MoveSound.mp3" />
     <None Remove="Assets\SFX\MoveSound.wav" />
@@ -50,6 +51,7 @@
     <Resource Include="Assets\BlackRook.png" />
     <Resource Include="Assets\ChessBoard.png" />
     <Resource Include="Assets\ChessLogo.png" />
+    <Resource Include="Assets\Draw.png" />
     <Resource Include="Assets\icon.png" />
     <Resource Include="Assets\WhiteBishop.png" />
     <Resource Include="Assets\WhiteKing.png" />

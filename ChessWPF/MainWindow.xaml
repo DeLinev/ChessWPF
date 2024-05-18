@@ -25,7 +25,7 @@
                 <RowDefinition Height="204" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
 
@@ -33,9 +33,11 @@
                             Grid.ColumnSpan="5" Grid.RowSpan="6"/>
             
             <Button x:Name="FriendGameButton" Style="{StaticResource MenuButtonStyle}" Grid.Column="2" Grid.Row="2" 
-                Content="Грати з другом" Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" Foreground="#FF080808" Click="FriendGameButton_Click" />
+                Content="Грати з другом" Width="240" Margin="5" Padding="15" FontSize="20" Background="#9991ec" Foreground="#FF080808" Click="FriendGameButton_Click" />
             <Button x:Name="ComputerGameButton" Style="{StaticResource MenuButtonStyle}" Grid.Column="2" Grid.Row="3" Click="ComputerGameButton_Click"
-                Content="Грати з комп'ютером" Width="240" Margin="10" Padding="20" FontSize="20" Background="#9991ec" />
+                Content="Грати з комп'ютером" Width="240" Margin="5" Padding="15" FontSize="20" Background="#9991ec" />
+            <Button x:Name="StatisticButton" Style="{StaticResource MenuButtonStyle}" Grid.Column="2" Grid.Row="4" Click="StatisticButton_Click"
+                Content="Статистика" Width="240" Margin="5" Padding="15" FontSize="20" Background="#9991ec" />
 
             <Grid Grid.ColumnSpan="5" Grid.RowSpan="6">
                 <Grid.ColumnDefinitions>

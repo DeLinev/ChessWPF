@@ -337,6 +337,101 @@ namespace ChessWPF.UserControls
 					File.Delete(movesFilePath);
 				}
 			}
+
+			HandleStat(info);
+		}
+
+		protected void HandleStat(GameOver info)
+		{
+			Dictionary<PossibleEndings, int> reasonStatIndexes = new()
+			{
+				{ PossibleEndings.CheckMate, 3 },
+				{ PossibleEndings.StaleMate, 4 },
+				{ PossibleEndings.TimerIsOver, 5 },
+				{ PossibleEndings.InsuffMaterial, 6 },
+				{ PossibleEndings.FiftyMoveRule, 7 },
+			};
+
+			Dictionary<PieceColor?, int> winnerStatIndexes = new()
+			{
+				{ PieceColor.White, 0 },
+				{ PieceColor.Black, 1 },
+			};
+
+			string savesFolderPath = "../../../Saves/";
+			string statFileName;
+
+			if (IsComputerEnabled)
+				statFileName = "computerStat.txt";
+			else
+				statFileName = "friendStat.txt";
+
+			string gameStatFilePath = System.IO.Path.Combine(savesFolderPath, statFileName);
+
+			if (Directory.Exists(savesFolderPath))
+			{
+				if (File.Exists(gameStatFilePath))
+				{
+					int[] stats = new int[8];
+
+					using (StreamReader sr = File.OpenText(gameStatFilePath))
+					{
+						string line = sr.ReadLine();
+						string[] parts = line.Split(' ');
+
+						for (int i = 0; i < 8; i++)
+							stats[i] = int.Parse(parts[i]);
+
+						if (info.Winner == null)
+							stats[2]++;
+						else
+							stats[winnerStatIndexes[info.Winner]]++;
+
+						stats[reasonStatIndexes[info.Ending]]++;
+					}
+
+					File.Delete(gameStatFilePath);
+
+					using (StreamWriter sw = File.CreateText(gameStatFilePath))
+					{
+						sw.WriteLine(string.Join(" ", stats));
+					}
+				}
+				else
+				{
+					using (StreamWriter sw = File.CreateText(gameStatFilePath))
+					{
+						int[] stats = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+						if (info.Winner == null)
+							stats[2]++;
+						else
+							stats[winnerStatIndexes[info.Winner]]++;
+
+						stats[reasonStatIndexes[info.Ending]]++;
+
+						sw.WriteLine(string.Join(" ", stats));
+					}
+				}
+			}
+			else
+			{
+				Directory.CreateDirectory(savesFolderPath);
+
+				using (StreamWriter sw = File.CreateText(gameStatFilePath))
+				{
+					int[] stats = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+					if (info.Winner == null)
+						stats[2]++;
+					else
+						stats[winnerStatIndexes[info.Winner]]++;
+
+					stats[reasonStatIndexes[info.Ending]]++;
+
+					sw.WriteLine(string.Join(" ", stats));
+				}
+			}
 		}
 
 		protected void AddToOverlayGrid()
@@ -698,9 +793,8 @@ namespace ChessWPF.UserControls
 				if (TimerWhite.Time == "00:00")
 				{
 					board.GameOver = new GameOver(PieceColor.Black, PossibleEndings.TimerIsOver);
-					StatusTextBlock.Text = "Час білих вичерпано";
-					GameEndUserControl gameEndMenu = new GameEndUserControl(this);
-					OverlayMenu.Content = gameEndMenu;
+
+					EndGame(board.GameOver);
 				}
 			}
 			else
@@ -711,9 +805,8 @@ namespace ChessWPF.UserControls
 				if (TimerBlack.Time == "00:00")
 				{
 					board.GameOver = new GameOver(PieceColor.White, PossibleEndings.TimerIsOver);
-					StatusTextBlock.Text = "Час чорних вичерпано";
-					GameEndUserControl gameEndMenu = new GameEndUserControl(this);
-					OverlayMenu.Content = gameEndMenu;
+
+					EndGame(board.GameOver);
 				}
 			}
 		}

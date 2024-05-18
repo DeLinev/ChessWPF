@@ -476,7 +476,7 @@
 			else
 			{
 				rookPosition = new Position(0, 7);
-				kingPosition = new Position(7, 4);
+				kingPosition = new Position(0, 4);
 			}
 
 			if (IsPositionEmpty(rookPosition) || GetPiece(rookPosition).HasMoved)
