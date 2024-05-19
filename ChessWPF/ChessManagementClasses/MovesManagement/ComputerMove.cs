@@ -103,7 +103,12 @@
 
         protected int Evaluate(Board board)
         {
-            Dictionary<ChessPieceType, int> pieceValues = new Dictionary<ChessPieceType, int>
+			if (board.GameOver != null && board.GameOver.Winner == PieceColor.Black)
+				return int.MaxValue;
+			else if (board.GameOver != null && board.GameOver.Winner == PieceColor.White)
+				return int.MinValue;
+
+			Dictionary<ChessPieceType, int> pieceValues = new Dictionary<ChessPieceType, int>
             {
                 { ChessPieceType.Pawn, 1 },
                 { ChessPieceType.Knight, 3 },

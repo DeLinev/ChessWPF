@@ -244,12 +244,13 @@ namespace ChessWPF.UserControls
 							{
 								ComputerMove computerMove = new ComputerMove();
 								ManageMove(computerMove);
+
+								if (board.GameOver != null)
+									EndGame(board.GameOver);
+
 								timer.Stop();
 							};
 							timer.Start();
-
-							if (board.GameOver != null)
-								EndGame(board.GameOver);
 						}
 
 						break;
