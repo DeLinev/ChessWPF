@@ -104,9 +104,9 @@
         protected int Evaluate(Board board)
         {
 			if (board.GameOver != null && board.GameOver.Winner == PieceColor.Black)
-				return int.MaxValue;
+				return 1000;
 			else if (board.GameOver != null && board.GameOver.Winner == PieceColor.White)
-				return int.MinValue;
+				return -1000;
 
 			Dictionary<ChessPieceType, int> pieceValues = new Dictionary<ChessPieceType, int>
             {
