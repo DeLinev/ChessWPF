@@ -47,60 +47,36 @@ namespace ChessWPF.UserControls
             string gameStateFilePath = Path.Combine(savesFolderPath, gameStateFileName);
 			string movesFilePath = Path.Combine(savesFolderPath, movesFileName);
 
-			if (Directory.Exists(savesFolderPath))
-			{
-				if (File.Exists(gameStateFilePath))
-				{
-					File.Delete(gameStateFilePath);
-				}
-
-				using (StreamWriter sw = File.CreateText(gameStateFilePath))
-				{
-                    string gameState = gameUserControl.Board.GetFenString();
-
-                    if (gameUserControl.IsTimerEnabled)
-                        gameState += " " + gameUserControl.TimerWhite.Time + " " + gameUserControl.TimerBlack.Time 
-							+ " " + gameUserControl.TimerWhite.InitialTime;
-					else
-						gameState += " - - -";
-
-					sw.WriteLine(gameState);
-				}
-
-				if (File.Exists(movesFilePath))
-				{
-					File.Delete(movesFilePath);
-				}
-
-				using (StreamWriter sw = File.CreateText(movesFilePath))
-				{
-					sw.WriteLine(gameUserControl.Moves);
-				}
-			}
-			else
-			{
-				Directory.CreateDirectory(savesFolderPath);
-
-				using (StreamWriter sw = File.CreateText(gameStateFilePath))
-				{
-					string gameState = gameUserControl.Board.GetFenString();
-
-					if (gameUserControl.IsTimerEnabled)
-						gameState += " " + gameUserControl.TimerWhite.Time + " " + gameUserControl.TimerBlack.Time
-							+ " " + gameUserControl.TimerWhite.InitialTime;
-					else
-						gameState += " - - -";
-
-					sw.WriteLine(gameState);
-				}
-
-				using (StreamWriter sw = File.CreateText(movesFilePath))
-				{
-					sw.WriteLine(gameUserControl.Moves);
-				}
-			}
+			SaveGame(gameStateFilePath, movesFilePath, savesFolderPath);
 
             gameUserControl.ToMainMenu();
+        }
+
+		private void SaveGame(string gameStateFilePath, string movesFilePath, string savesFolderPath)
+		{
+			if(!Directory.Exists(savesFolderPath))
+                Directory.CreateDirectory(savesFolderPath);
+
+            File.Delete(gameStateFilePath);
+            File.Delete(movesFilePath);
+
+            using (StreamWriter sw = File.CreateText(gameStateFilePath))
+            {
+                string gameState = gameUserControl.Board.GetFenString();
+
+                if (gameUserControl.IsTimerEnabled)
+                    gameState += " " + gameUserControl.TimerWhite.Time + " " + gameUserControl.TimerBlack.Time
+                        + " " + gameUserControl.TimerWhite.InitialTime;
+                else
+                    gameState += " - - -";
+
+                sw.WriteLine(gameState);
+            }
+
+            using (StreamWriter sw = File.CreateText(movesFilePath))
+            {
+                sw.WriteLine(gameUserControl.Moves);
+            }
         }
     }
 }
