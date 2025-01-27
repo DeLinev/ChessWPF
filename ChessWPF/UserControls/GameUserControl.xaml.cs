@@ -89,25 +89,10 @@ namespace ChessWPF.UserControls
 
 		protected bool SetBoardFromSaves()
 		{
-			string savesFolderPath = "../../../Saves/";
-			string gameStateFileName;
-			string movesFileName;
+            string gameStateFilePath = Board.GetGameStateFilePath(IsComputerEnabled);
+            string movesFilePath = Board.GetGameMovesFilePath(IsComputerEnabled);
 
-			if (IsComputerEnabled)
-			{
-				gameStateFileName = "computerSave.txt";
-				movesFileName = "computerMoves.txt";
-			}
-			else
-			{
-				gameStateFileName = "friendSave.txt";
-				movesFileName = "friendMoves.txt";
-			}
-
-			string gameStateFilePath = System.IO.Path.Combine(savesFolderPath, gameStateFileName);
-			string movesFilePath = System.IO.Path.Combine(savesFolderPath, movesFileName);
-
-			if (Directory.Exists(savesFolderPath))
+            if (Directory.Exists(Board.SaveFilePath))
 			{
 				if (File.Exists(gameStateFilePath))
 				{
@@ -308,25 +293,10 @@ namespace ChessWPF.UserControls
 			TimerWhite.Stop();
 			TimerBlack.Stop();
 
-			string savesFolderPath = "../../../Saves/";
-			string gameStateFileName;
-			string movesFileName;
+            string gameStateFilePath = Board.GetGameStateFilePath(IsComputerEnabled);
+            string movesFilePath = Board.GetGameMovesFilePath(IsComputerEnabled);
 
-			if (IsComputerEnabled)
-			{
-				gameStateFileName = "computerSave.txt";
-				movesFileName = "computerMoves.txt";
-			}
-			else
-			{
-				gameStateFileName = "friendSave.txt";
-				movesFileName = "friendMoves.txt";
-			}
-
-			string gameStateFilePath = System.IO.Path.Combine(savesFolderPath, gameStateFileName);
-			string movesFilePath = System.IO.Path.Combine(savesFolderPath, movesFileName);
-
-			if (Directory.Exists(savesFolderPath))
+            if (Directory.Exists(Board.SaveFilePath))
 			{
 				if (File.Exists(gameStateFilePath))
 				{
@@ -359,17 +329,9 @@ namespace ChessWPF.UserControls
 				{ PieceColor.Black, 1 },
 			};
 
-			string savesFolderPath = "../../../Saves/";
-			string statFileName;
+            string gameStatFilePath = Board.GetStatFilePath(IsComputerEnabled);
 
-			if (IsComputerEnabled)
-				statFileName = "computerStat.txt";
-			else
-				statFileName = "friendStat.txt";
-
-			string gameStatFilePath = System.IO.Path.Combine(savesFolderPath, statFileName);
-
-			if (Directory.Exists(savesFolderPath))
+            if (Directory.Exists(Board.SaveFilePath))
 			{
 				if (File.Exists(gameStatFilePath))
 				{
@@ -417,7 +379,7 @@ namespace ChessWPF.UserControls
 			}
 			else
 			{
-				Directory.CreateDirectory(savesFolderPath);
+				Directory.CreateDirectory(Board.SaveFilePath);
 
 				using (StreamWriter sw = File.CreateText(gameStatFilePath))
 				{

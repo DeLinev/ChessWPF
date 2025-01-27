@@ -18,18 +18,11 @@ namespace ChessWPF.UserControls
 
 			mainMenuButton = btn;
 
-			string savesFolderPath = "../../../Saves/";
-			string friendStatFileName = "friendStat.txt";
-			string computerStatFileName = "computerStat.txt";
-
-			string friendStatFilePath = Path.Combine(savesFolderPath, friendStatFileName);
-			string computerStatFilePath = Path.Combine(savesFolderPath, computerStatFileName);
-
-			if (Directory.Exists(savesFolderPath))
+			if (Directory.Exists(Board.SaveFilePath))
 			{
-				if (File.Exists(friendStatFilePath))
+				if (File.Exists(Board.FriendStatFilePath))
 				{
-					using (StreamReader sr = File.OpenText(friendStatFilePath))
+					using (StreamReader sr = File.OpenText(Board.FriendStatFilePath))
 					{
 						string line = sr.ReadLine();
 						string[] parts = line.Split(' ');
@@ -46,7 +39,7 @@ namespace ChessWPF.UserControls
 				}
 				else
 				{
-					using (StreamWriter sw = File.CreateText(friendStatFilePath))
+					using (StreamWriter sw = File.CreateText(Board.FriendStatFilePath))
 					{
 						FrWhite.Text = "0";
 						FrBlack.Text = "0";
@@ -61,9 +54,9 @@ namespace ChessWPF.UserControls
 					}
 				}
 
-				if (File.Exists(computerStatFilePath))
+				if (File.Exists(Board.ComputerStatFilePath))
 				{
-					using (StreamReader sr = File.OpenText(computerStatFilePath))
+					using (StreamReader sr = File.OpenText(Board.ComputerStatFilePath))
 					{
 						string line = sr.ReadLine();
 						string[] parts = line.Split(' ');
@@ -80,7 +73,7 @@ namespace ChessWPF.UserControls
 				}
 				else
 				{
-					using (StreamWriter sw = File.CreateText(computerStatFilePath))
+					using (StreamWriter sw = File.CreateText(Board.ComputerStatFilePath))
 					{
 						CmWhite.Text = "0";
 						CmBlack.Text = "0";
@@ -97,9 +90,9 @@ namespace ChessWPF.UserControls
 			}
 			else
 			{
-				Directory.CreateDirectory(savesFolderPath);
+				Directory.CreateDirectory(Board.SaveFilePath);
 
-				using (StreamWriter sw = File.CreateText(friendStatFilePath))
+				using (StreamWriter sw = File.CreateText(Board.FriendStatFilePath))
 				{
 					FrWhite.Text = "0";
 					FrBlack.Text = "0";
@@ -113,7 +106,7 @@ namespace ChessWPF.UserControls
 					sw.WriteLine("0 0 0 0 0 0 0 0");
 				}
 
-				using (StreamWriter sw = File.CreateText(computerStatFilePath))
+				using (StreamWriter sw = File.CreateText(Board.ComputerStatFilePath))
 				{
 					CmWhite.Text = "0";
 					CmBlack.Text = "0";
