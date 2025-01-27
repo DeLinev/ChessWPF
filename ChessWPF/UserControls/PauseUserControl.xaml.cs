@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using ChessManagementClasses;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -29,33 +30,18 @@ namespace ChessWPF.UserControls
 
         private void MainMenuButton_Click(object sender, RoutedEventArgs e)
         {
-			string savesFolderPath = "../../../Saves/";
-            string gameStateFileName;
-			string movesFileName;
+            string gameStateFilePath = Board.GetGameStateFilePath(gameUserControl.IsComputerEnabled);
+			string movesFilePath = Board.GetGameMovesFilePath(gameUserControl.IsComputerEnabled);
 
-			if (gameUserControl.IsComputerEnabled)
-			{
-				gameStateFileName = "computerSave.txt";
-				movesFileName = "computerMoves.txt";
-			}
-			else
-			{
-				gameStateFileName = "friendSave.txt";
-				movesFileName = "friendMoves.txt";
-			}
-
-            string gameStateFilePath = Path.Combine(savesFolderPath, gameStateFileName);
-			string movesFilePath = Path.Combine(savesFolderPath, movesFileName);
-
-			SaveGame(gameStateFilePath, movesFilePath, savesFolderPath);
+            SaveGame(gameStateFilePath, movesFilePath);
 
             gameUserControl.ToMainMenu();
         }
 
-		private void SaveGame(string gameStateFilePath, string movesFilePath, string savesFolderPath)
+		private void SaveGame(string gameStateFilePath, string movesFilePath)
 		{
-			if(!Directory.Exists(savesFolderPath))
-                Directory.CreateDirectory(savesFolderPath);
+			if(!Directory.Exists(Board.SaveFilePath))
+                Directory.CreateDirectory(Board.SaveFilePath);
 
             File.Delete(gameStateFilePath);
             File.Delete(movesFilePath);

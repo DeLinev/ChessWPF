@@ -1,19 +1,29 @@
-﻿namespace ChessManagementClasses
+﻿using System.IO;
+
+namespace ChessManagementClasses
 {
 	public class Board
 	{
-		protected PieceBase[,] pieces = new PieceBase[8, 8];
+		public static string SaveFilePath { get; } = "../../../Saves/";
+		public static string ComputerSaveFilePath { get; } = Path.Combine(SaveFilePath, "computerSave.txt");
+		public static string ComputerMovesFilePath { get; } = Path.Combine(SaveFilePath, "computerMoves.txt");
+		public static string ComputerStatFilePath { get; } = Path.Combine(SaveFilePath, "computerStat.txt");
+		public static string FriendSaveFilePath { get; } = Path.Combine(SaveFilePath, "friendSave.txt");
+		public static string FriendMovesFilePath { get; } = Path.Combine(SaveFilePath, "friendMoves.txt");
+		public static string FriendStatFilePath { get; } = Path.Combine(SaveFilePath, "friendStat.txt");
+
+        protected PieceBase[,] pieces = new PieceBase[8, 8];
 		protected PieceColor currentPlayer;
 		protected Dictionary<ChessPieceType, byte> whitePiecesNum;
 		protected Dictionary<ChessPieceType, byte> blackPiecesNum;
-        protected byte totalPiecesNum;
+		protected byte totalPiecesNum;
 		protected byte fiftyMoveRuleCounter;
 
-        public Position EnPassantPosition { get; set; }
+		public Position EnPassantPosition { get; set; }
 		public PieceColor CurrentPlayer { get => currentPlayer; }
 		public GameOver GameOver { get; set; }
 
-		public Board() 
+		public Board()
 		{
 			SetBoard();
 			currentPlayer = PieceColor.White;
@@ -21,19 +31,19 @@
 			whitePiecesNum = new Dictionary<ChessPieceType, byte>();
 			blackPiecesNum = new Dictionary<ChessPieceType, byte>();
 
-			foreach (ChessPieceType pieceType in new ChessPieceType[] { ChessPieceType.Pawn, ChessPieceType.Rook, ChessPieceType.Knight, 
+			foreach (ChessPieceType pieceType in new ChessPieceType[] { ChessPieceType.Pawn, ChessPieceType.Rook, ChessPieceType.Knight,
 				ChessPieceType.Bishop, ChessPieceType.Queen, ChessPieceType.King})
 			{
 				whitePiecesNum[pieceType] = 0;
 				blackPiecesNum[pieceType] = 0;
-            }
+			}
 
 			totalPiecesNum = 0;
 			fiftyMoveRuleCounter = 0;
 		}
 
-        public Board(Board other)
-        {
+		public Board(Board other)
+		{
 			for (int i = 0; i < 8; i++)
 			{
 				for (int j = 0; j < 8; j++)
@@ -43,16 +53,16 @@
 				}
 			}
 
-            currentPlayer = other.currentPlayer;
-            whitePiecesNum = new Dictionary<ChessPieceType, byte>(other.whitePiecesNum);
-            blackPiecesNum = new Dictionary<ChessPieceType, byte>(other.blackPiecesNum);
-            totalPiecesNum = other.totalPiecesNum;
-            fiftyMoveRuleCounter = other.fiftyMoveRuleCounter;
-            EnPassantPosition = other.EnPassantPosition != null ? new Position(other.EnPassantPosition) : null;
-            GameOver = other.GameOver != null ? new GameOver(other.GameOver) : null;
-        }
+			currentPlayer = other.currentPlayer;
+			whitePiecesNum = new Dictionary<ChessPieceType, byte>(other.whitePiecesNum);
+			blackPiecesNum = new Dictionary<ChessPieceType, byte>(other.blackPiecesNum);
+			totalPiecesNum = other.totalPiecesNum;
+			fiftyMoveRuleCounter = other.fiftyMoveRuleCounter;
+			EnPassantPosition = other.EnPassantPosition != null ? new Position(other.EnPassantPosition) : null;
+			GameOver = other.GameOver != null ? new GameOver(other.GameOver) : null;
+		}
 
-        public PieceBase GetPiece(Position position)
+		public PieceBase GetPiece(Position position)
 		{
 			return pieces[position.Rank, position.File];
 		}
@@ -207,7 +217,7 @@
 				EnPassantPosition = new Position(enPassant);
 		}
 
-        public bool IsPositionEmpty(Position position)
+		public bool IsPositionEmpty(Position position)
 		{
 			return GetPiece(position) == null;
 		}
@@ -253,8 +263,8 @@
 
 			if (move.IsCapture || GetPiece(move.EndPosition).Type == ChessPieceType.Pawn)
 				fiftyMoveRuleCounter = 0;
-            else
-                fiftyMoveRuleCounter++;
+			else
+				fiftyMoveRuleCounter++;
 
 			if (isStalemate())
 			{
@@ -264,7 +274,7 @@
 					GameOver = new GameOver(null, PossibleEndings.StaleMate);
 			}
 			else if (IsInsuffMaterial())
-                GameOver = new GameOver(null, PossibleEndings.InsuffMaterial);
+				GameOver = new GameOver(null, PossibleEndings.InsuffMaterial);
 			else if (IsFiftyMoveRule())
 				GameOver = new GameOver(null, PossibleEndings.FiftyMoveRule);
 		}
@@ -312,7 +322,7 @@
 			CountPieces();
 
 			if (totalPiecesNum == 2)
-                return true;
+				return true;
 
 			if (totalPiecesNum == 3)
 			{
@@ -321,75 +331,75 @@
 					return true;
 
 				if (GetPiecesNum(ChessPieceType.Knight, PieceColor.White) == 1 ||
-                    GetPiecesNum(ChessPieceType.Knight, PieceColor.Black) == 1)
+					GetPiecesNum(ChessPieceType.Knight, PieceColor.Black) == 1)
 					return true;
-            }
+			}
 
-            if (totalPiecesNum == 4)
+			if (totalPiecesNum == 4)
 			{
-                if (GetPiecesNum(ChessPieceType.Bishop, PieceColor.White) != 1 ||
-                    GetPiecesNum(ChessPieceType.Bishop, PieceColor.Black) != 1)
-                    return false;
+				if (GetPiecesNum(ChessPieceType.Bishop, PieceColor.White) != 1 ||
+					GetPiecesNum(ChessPieceType.Bishop, PieceColor.Black) != 1)
+					return false;
 
 				Position WhiteBishopPosition = new Position(0, 0);
 				Position BlackBishopPosition = new Position(0, 0);
 
-                for (int i = 0; i < 8; i++)
+				for (int i = 0; i < 8; i++)
 				{
 					for (int j = 0; j < 8; j++)
 					{
-                        if (pieces[i, j] != null && pieces[i, j].Type == ChessPieceType.Bishop)
+						if (pieces[i, j] != null && pieces[i, j].Type == ChessPieceType.Bishop)
 						{
 							if (pieces[i, j].Color == PieceColor.White)
-                                WhiteBishopPosition = new Position(i, j);
-                            else
-                                BlackBishopPosition = new Position(i, j);
+								WhiteBishopPosition = new Position(i, j);
+							else
+								BlackBishopPosition = new Position(i, j);
 						}
-                    }
+					}
 				}
 
 				if ((WhiteBishopPosition.File + WhiteBishopPosition.Rank) % 2 == (BlackBishopPosition.File + BlackBishopPosition.Rank) % 2)
-                    return true;
-            }
+					return true;
+			}
 
-            return false;
-        }
+			return false;
+		}
 
 		protected void CountPieces()
 		{
-            foreach (ChessPieceType pieceType in new ChessPieceType[] { ChessPieceType.Pawn, ChessPieceType.Rook, ChessPieceType.Knight,
-                ChessPieceType.Bishop, ChessPieceType.Queen, ChessPieceType.King})
-            {
-                whitePiecesNum[pieceType] = 0;
-                blackPiecesNum[pieceType] = 0;
-            }
-
-            totalPiecesNum = 0;
-
-            for (int i = 0; i < 8; i++)
+			foreach (ChessPieceType pieceType in new ChessPieceType[] { ChessPieceType.Pawn, ChessPieceType.Rook, ChessPieceType.Knight,
+				ChessPieceType.Bishop, ChessPieceType.Queen, ChessPieceType.King})
 			{
-                for (int j = 0; j < 8; j++)
-				{
-                    if (pieces[i, j] != null)
-					{
-                        totalPiecesNum++;
+				whitePiecesNum[pieceType] = 0;
+				blackPiecesNum[pieceType] = 0;
+			}
 
-                        if (pieces[i, j].Color == PieceColor.White)
+			totalPiecesNum = 0;
+
+			for (int i = 0; i < 8; i++)
+			{
+				for (int j = 0; j < 8; j++)
+				{
+					if (pieces[i, j] != null)
+					{
+						totalPiecesNum++;
+
+						if (pieces[i, j].Color == PieceColor.White)
 							whitePiecesNum[pieces[i, j].Type]++;
-                        else
+						else
 							blackPiecesNum[pieces[i, j].Type]++;
-                    }
-                }
-            }
-        }
+					}
+				}
+			}
+		}
 
 		protected byte GetPiecesNum(ChessPieceType pieceType, PieceColor color)
 		{
-            if (color == PieceColor.White)
-                return whitePiecesNum[pieceType];
-            else
-                return blackPiecesNum[pieceType];
-        }
+			if (color == PieceColor.White)
+				return whitePiecesNum[pieceType];
+			else
+				return blackPiecesNum[pieceType];
+		}
 
 		protected bool IsFiftyMoveRule() => (fiftyMoveRuleCounter / 2) >= 50;
 
@@ -426,14 +436,14 @@
 			}
 
 			fnStr += " ";
-			
+
 			if (currentPlayer == PieceColor.White)
 				fnStr += "w";
 			else
 				fnStr += "b";
 
 			fnStr += " ";
-			
+
 			bool canWCastleR = CanCastleRight(PieceColor.White);
 			bool canWCastleL = CanCastleLeft(PieceColor.White);
 			bool canBCastleR = CanCastleRight(PieceColor.Black);
@@ -454,7 +464,7 @@
 				fnStr += "-";
 
 			fnStr += " ";
-			
+
 			if (EnPassantPosition != null)
 				fnStr += EnPassantPosition.ToString();
 			else
@@ -512,5 +522,20 @@
 
 			return true;
 		}
-	}
+
+		public static string GetGameStateFilePath(bool IsComputerEnabled)
+		{
+			return IsComputerEnabled ? ComputerSaveFilePath : FriendSaveFilePath;
+		}
+
+		public static string GetGameMovesFilePath(bool IsComputerEnabled)
+		{
+			return IsComputerEnabled ? ComputerMovesFilePath : FriendMovesFilePath;
+		}
+
+        public static string GetStatFilePath(bool IsComputerEnabled)
+        {
+            return IsComputerEnabled ? ComputerStatFilePath : FriendStatFilePath;
+        }
+    }
 }
