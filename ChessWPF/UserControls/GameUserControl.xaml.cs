@@ -622,98 +622,11 @@ namespace ChessWPF.UserControls
 		{
 			BitmapImage bitmapImage = new BitmapImage();
 
-			switch (piece)
-			{
-				case Pawn p:
-					if (p.Color == PieceColor.White)
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/WhitePawn.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					else
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/BlackPawn.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					break;
-				case Rook r:
-					if (r.Color == PieceColor.White)
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/WhiteRook.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					else
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/BlackRook.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					break;
-				case Knight k:
-					if (k.Color == PieceColor.White)
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/WhiteKnight.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					else
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/BlackKnight.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					break;
-				case Bishop b:
-					if (b.Color == PieceColor.White)
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/WhiteBishop.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					else
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/BlackBishop.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					break;
-				case Queen q:
-					if (q.Color == PieceColor.White)
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/WhiteQueen.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					else
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/BlackQueen.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					break;
-				case King k:
-					if (k.Color == PieceColor.White)
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/WhiteKing.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					else
-					{
-						bitmapImage.BeginInit();
-						bitmapImage.UriSource = new Uri("/Assets/BlackKing.png", UriKind.Relative);
-						bitmapImage.EndInit();
-					}
-					break;
-				default:
-					bitmapImage = null;
-					break;
-			}
+			bitmapImage.BeginInit();
+            bitmapImage.UriSource = new Uri(piece?.ImagePath ?? "", UriKind.Relative);
+            bitmapImage.EndInit();
 
-			return bitmapImage;
+            return bitmapImage;
 		}
 
 		protected bool IsPawnDoubleMove(MoveBase move) =>

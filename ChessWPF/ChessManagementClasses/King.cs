@@ -4,7 +4,11 @@
 	{
 		public override ChessPieceType Type => ChessPieceType.King;
 
-		public King(PieceColor color) : base(color) { }
+        public override string ImagePath { get => Color == PieceColor.White
+                                                        ? "/Assets/WhiteKing.png"
+                                                        : "/Assets/BlackKing.png"; }
+
+        public King(PieceColor color) : base(color) { }
         public King(King k) : base(k) { }
 
         public override List<MoveBase> GetPossibleMoves(Board board, Position position)
