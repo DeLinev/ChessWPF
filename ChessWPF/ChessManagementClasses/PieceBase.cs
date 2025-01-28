@@ -18,6 +18,8 @@
         }
         public bool PreviousHasMoved { get => previeousHasMoved; }
 
+        public abstract string ImagePath { get; }
+
         public PieceBase(PieceColor color)
         {
             Color = color;

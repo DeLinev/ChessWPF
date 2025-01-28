@@ -4,7 +4,11 @@
 	{
 		public override ChessPieceType Type { get => ChessPieceType.Knight; }
 
-		public Knight(PieceColor color) : base(color) { }
+        public override string ImagePath { get => Color == PieceColor.White
+                                                        ? "/Assets/WhiteKnight.png"
+                                                        : "/Assets/BlackKnight.png"; }
+
+        public Knight(PieceColor color) : base(color) { }
 
 		public Knight(Knight k) : base(k) { }
 

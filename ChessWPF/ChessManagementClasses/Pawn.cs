@@ -4,6 +4,10 @@
     {
         public override ChessPieceType Type { get => ChessPieceType.Pawn; }
 
+        public override string ImagePath { get => Color == PieceColor.White 
+                                                        ? "/Assets/WhitePawn.png"
+                                                        : "/Assets/BlackPawn.png"; }
+
         public Pawn(PieceColor color) : base(color) { }
 
         public Pawn(Pawn p) : base(p) { }

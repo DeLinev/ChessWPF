@@ -4,7 +4,11 @@
 	{
 		public override ChessPieceType Type => ChessPieceType.Bishop;
 
-		public Bishop(PieceColor color) : base(color) { }
+        public override string ImagePath { get => Color == PieceColor.White
+                                                        ? "/Assets/WhiteBishop.png"
+                                                        : "/Assets/BlackBishop.png"; }
+
+        public Bishop(PieceColor color) : base(color) { }
 
         public Bishop(Bishop b) : base(b) { }
 
