@@ -2,23 +2,32 @@
 {
     public abstract class PieceBase
     {
-        protected bool previeousHasMoved;
-        protected bool hasMoved = false;
+        protected bool previousHasMoved;
+        protected bool hasMoved;
+
+        private static readonly Dictionary<ChessPieceType, char> pieceCharMap = new()
+        {
+            { ChessPieceType.Pawn, 'p' },
+            { ChessPieceType.Rook, 'r' },
+            { ChessPieceType.Knight, 'n' },
+            { ChessPieceType.Bishop, 'b' },
+            { ChessPieceType.Queen, 'q' },
+            { ChessPieceType.King, 'k' }
+        };
 
         public abstract ChessPieceType Type { get; }
         public PieceColor Color { get; }
+        public bool PreviousHasMoved { get => previousHasMoved; }
+        public abstract string ImagePath { get; }
         public bool HasMoved
         {
             get => hasMoved;
             set
             {
-                previeousHasMoved = hasMoved;
+                previousHasMoved = hasMoved;
                 hasMoved = value;
             }
         }
-        public bool PreviousHasMoved { get => previeousHasMoved; }
-
-        public abstract string ImagePath { get; }
 
         public PieceBase(PieceColor color)
         {
@@ -29,29 +38,10 @@
         {
             Color = other.Color;
             hasMoved = other.hasMoved;
-            previeousHasMoved = other.previeousHasMoved;
+            previousHasMoved = other.previousHasMoved;
         }
 
-        public PieceBase Clone()
-        {
-            switch(Type)
-            {
-                case ChessPieceType.Pawn:
-                    return new Pawn(this as Pawn);
-                case ChessPieceType.Rook:
-                    return new Rook(this as Rook);
-                case ChessPieceType.Knight:
-                    return new Knight(this as Knight);
-                case ChessPieceType.Bishop:
-                    return new Bishop(this as Bishop);
-                case ChessPieceType.Queen:
-                    return new Queen(this as Queen);
-                case ChessPieceType.King:
-                    return new King(this as King);
-                default:
-                    throw new Exception("Invalid piece type");
-            }
-        }
+        public abstract PieceBase Clone();
 
         public abstract List<MoveBase> GetPossibleMoves(Board board, Position current);
 
@@ -61,8 +51,11 @@
 
             foreach (MoveBase move in moves)
             {
-                if (board.GetPiece(move.EndPosition) != null && board.GetPiece(move.EndPosition).Type == ChessPieceType.King)
+                var piece = board.GetPiece(move.EndPosition);
+                if (piece != null && piece.Type == ChessPieceType.King)
+                {
                     return true;
+                }
             }
 
             return false;
@@ -79,36 +72,16 @@
             }
 
             if (Board.IsPositionValid(current) && board.GetPiece(current).Color != Color)
+            {
                 yield return current;
+            }
 
             yield break;
         }
 
         public char GetPieceChar()
         {
-            char pieceChar = ' ';
-
-            switch (Type)
-            {
-                case ChessPieceType.Pawn:
-					pieceChar = 'p';
-					break;
-                case ChessPieceType.Rook:
-                    pieceChar = 'r';
-                    break;
-                case ChessPieceType.Knight:
-					pieceChar = 'n';
-					break;
-                case ChessPieceType.Bishop:
-                    pieceChar = 'b';
-                    break;
-                case ChessPieceType.Queen:
-					pieceChar = 'q';
-					break;
-                case ChessPieceType.King:
-					pieceChar = 'k';
-					break;
-            }
+            var pieceChar = pieceCharMap[Type];
 
             return Color == PieceColor.White ? char.ToUpper(pieceChar) : pieceChar;
         }

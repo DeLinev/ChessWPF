@@ -3,16 +3,16 @@
     public class Knight : PieceBase
 	{
 		public override ChessPieceType Type { get => ChessPieceType.Knight; }
-
         public override string ImagePath { get => Color == PieceColor.White
                                                         ? "/Assets/WhiteKnight.png"
                                                         : "/Assets/BlackKnight.png"; }
-
         public Knight(PieceColor color) : base(color) { }
-
 		public Knight(Knight k) : base(k) { }
-
-		public override List<MoveBase> GetPossibleMoves(Board board, Position position)
+        public override PieceBase Clone()
+        {
+            return new Knight(this);
+        }
+        public override List<MoveBase> GetPossibleMoves(Board board, Position position)
 		{
 			List<MoveBase> moves = new List<MoveBase>();
 

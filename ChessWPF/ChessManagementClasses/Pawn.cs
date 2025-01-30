@@ -3,15 +3,15 @@
     public class Pawn : PieceBase
     {
         public override ChessPieceType Type { get => ChessPieceType.Pawn; }
-
         public override string ImagePath { get => Color == PieceColor.White 
                                                         ? "/Assets/WhitePawn.png"
                                                         : "/Assets/BlackPawn.png"; }
-
         public Pawn(PieceColor color) : base(color) { }
-
         public Pawn(Pawn p) : base(p) { }
-
+        public override PieceBase Clone()
+        {
+            return new Pawn(this);
+        }
         public override List<MoveBase> GetPossibleMoves(Board board, Position position)
         {
             List<MoveBase> moves = new List<MoveBase>();
