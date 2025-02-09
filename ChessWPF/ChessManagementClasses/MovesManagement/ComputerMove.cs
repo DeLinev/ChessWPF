@@ -63,42 +63,40 @@
             if (depth == 0 || board.GameOver != null)
                 return Evaluate(board);
 
+            int minOrMaxScore;
+
             if (maximizingPlayer)
-            {
-                int maxScore = int.MinValue;
-                List<MoveBase> moves = GetMoves(board);
-
-                foreach (MoveBase move in moves)
-                {
-                    Board boardCopy = new Board(board);
-                    boardCopy.Move(move);
-                    int score = Minimax(boardCopy, depth - 1, alpha, beta, false);
-                    maxScore = Math.Max(maxScore, score);
-                    alpha = Math.Max(alpha, score);
-                    if (beta <= alpha)
-                        break;
-                }
-
-                return maxScore;
-            }
+                minOrMaxScore = int.MinValue;
             else
+                minOrMaxScore = int.MaxValue;
+
+            List<MoveBase> moves = GetMoves(board);
+
+            foreach (MoveBase move in moves)
             {
-                int minScore = int.MaxValue;
-                List<MoveBase> moves = GetMoves(board);
-
-                foreach (MoveBase move in moves)
+                Board boardCopy = new Board(board);
+                boardCopy.Move(move);
+                int score;
+                if (maximizingPlayer)
+                    score = Minimax(boardCopy, depth - 1, alpha, beta, false);
+                else 
+                    score = Minimax(boardCopy, depth -1, alpha, beta, true);
+                if (maximizingPlayer)
                 {
-                    Board boardCopy = new Board(board);
-                    boardCopy.Move(move);
-                    int score = Minimax(boardCopy, depth - 1, alpha, beta, true);
-                    minScore = Math.Min(minScore, score);
-                    beta = Math.Min(beta, score);
-                    if (beta <= alpha)
-                        break;
+                    minOrMaxScore = Math.Max(minOrMaxScore, score);
+                    alpha = Math.Max(alpha, score);
                 }
-
-                return minScore;
+                else
+                {
+                    minOrMaxScore = Math.Min(minOrMaxScore, score);
+                    beta = Math.Min(beta, score);
+                }
+                
+                if (beta <= alpha)
+                    break;
             }
+
+            return minOrMaxScore;
         }
 
         protected int Evaluate(Board board)
@@ -126,51 +124,33 @@
                 {
                     PieceBase piece = board.GetPiece(new Position(i, j));
 
-                    if (piece != null)
-                    {
+                    if (piece == null) 
+                        continue;
 
-                        if (piece.Color == PieceColor.Black)
-                        {
-                            switch (piece.Type)
-                            {
-                                case ChessPieceType.Pawn:
-                                    score += 1;
-                                    if (i >= 3 && i <= 4 && j >= 3 && j <= 4)
-                                        score += 2;
-                                    break;
-                                case ChessPieceType.Knight:
-                                case ChessPieceType.Bishop:
-                                    score += 3;
-                                    break;
-                                case ChessPieceType.Rook:
-                                    score += 5;
-                                    break;
-                                case ChessPieceType.Queen:
-                                    score += 9;
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            switch (piece.Type)
-                            {
-                                case ChessPieceType.Pawn:
-                                    score -= 1;
-                                    if (i >= 3 && i <= 4 && j >= 3 && j <= 4)
-                                        score -= 2;
-                                    break;
-                                case ChessPieceType.Knight:
-                                case ChessPieceType.Bishop:
-                                    score -= 3;
-                                    break;
-                                case ChessPieceType.Rook:
-                                    score -= 5;
-                                    break;
-                                case ChessPieceType.Queen:
-                                    score -= 9;
-                                    break;
-                            }
-                        }
+                    int magicNumber;
+
+                    if (piece.Color == PieceColor.Black)
+                        magicNumber = 1;
+                    else
+                        magicNumber = -1;
+
+                    switch (piece.Type)
+                    {
+                        case ChessPieceType.Pawn:
+                            score += 1 * magicNumber;
+                            if (i >= 3 && i <= 4 && j >= 3 && j <= 4)
+                                score += 2 * magicNumber;
+                            break;
+                        case ChessPieceType.Knight:
+                        case ChessPieceType.Bishop:
+                            score += 3 * magicNumber;
+                            break;
+                        case ChessPieceType.Rook:
+                            score += 5 * magicNumber;
+                            break;
+                        case ChessPieceType.Queen:
+                            score += 9 * magicNumber;
+                            break;
                     }
                 }
             }
