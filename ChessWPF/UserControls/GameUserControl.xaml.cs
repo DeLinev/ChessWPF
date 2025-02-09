@@ -60,30 +60,24 @@ namespace ChessWPF.UserControls
 			mediaPlayer.Play();
 			mediaPlayer.Stop();
 
-			if (!IsComputerEnabled)
+			if (!IsComputerEnabled && isLoaded && IsTimerEnabled)
 			{
-				if (isLoaded)
+				switch (board.CurrentPlayer)
 				{
-					if (IsTimerEnabled)
-					{
-						switch (board.CurrentPlayer)
-						{
-							case PieceColor.White:
-								TimerWhite.Start();
-								break;
-							case PieceColor.Black:
-								TimerBlack.Start();
-								break;
-						}
-
-						TimerWhiteTextBlock.Text = TimerWhite.Time;
-						TimerBlackTextBlock.Text = TimerBlack.Time;
-					}
+					case PieceColor.White:
+						TimerWhite.Start();
+						break;
+					case PieceColor.Black:
+						TimerBlack.Start();
+						break;
 				}
-				else
-					OverlayMenu.Content = new TimerUserControl(this);
+
+				TimerWhiteTextBlock.Text = TimerWhite.Time;
+				TimerBlackTextBlock.Text = TimerBlack.Time;
 			}
-			else
+			else if (!IsComputerEnabled && !isLoaded)
+				OverlayMenu.Content = new TimerUserControl(this);
+			else if (IsComputerEnabled)
 				IsTimerEnabled = false;
 		}
 
@@ -92,54 +86,44 @@ namespace ChessWPF.UserControls
             string gameStateFilePath = Board.GetGameStateFilePath(IsComputerEnabled);
             string movesFilePath = Board.GetGameMovesFilePath(IsComputerEnabled);
 
-            if (Directory.Exists(Board.SaveFilePath))
+			if (!Directory.Exists(Board.SaveFilePath))
+				return false;
+
+			if (!File.Exists(gameStateFilePath) || !File.Exists(movesFilePath))
+				return false;
+
+			using StreamReader sr1 = File.OpenText(gameStateFilePath);
+
+			string line = sr1.ReadLine();
+			string[] parts = line.Split(' ');
+
+			string fenStr = parts[0] + ' ' + parts[1] + ' ' + parts[2] + ' ' + parts[3];
+
+			board.SetBoard(fenStr);
+
+			if (parts[4] != "-" && parts[5] != "-")
 			{
-				if (File.Exists(gameStateFilePath))
-				{
-					using (StreamReader sr = File.OpenText(gameStateFilePath))
-					{
-						string line = sr.ReadLine();
-						string[] parts = line.Split(' ');
-
-						string fenStr = parts[0] + ' ' + parts[1] + ' ' + parts[2] + ' ' + parts[3];
-
-						board.SetBoard(fenStr);
-
-						if (parts[4] != "-" && parts[5] != "-")
-						{
-							TimerWhite.SetTime(parts[4], parts[6]);
-							TimerBlack.SetTime(parts[5], parts[6]);
-						}
-						else
-							IsTimerEnabled = false;
-					}
-				}
-				else
-					return false;
-
-				if (File.Exists(movesFilePath))
-				{
-					using (StreamReader sr = File.OpenText(movesFilePath))
-					{
-						Moves = sr.ReadLine();
-						string[] moves = Moves.Split(' ');
-
-						for (int i = 0; i < moves.Length; i++)
-						{
-							if (moves[i] == "")
-								continue;
-
-							MoveToList(moves[i], i);
-						}
-					}
-				}
-				else
-					return false;
-
-				return true;
+				TimerWhite.SetTime(parts[4], parts[6]);
+				TimerBlack.SetTime(parts[5], parts[6]);
 			}
 			else
-				return false;
+				IsTimerEnabled = false;
+
+
+			using StreamReader sr2 = File.OpenText(movesFilePath);
+
+			Moves = sr2.ReadLine();
+			string[] moves = Moves.Split(' ');
+
+			for (int i = 0; i < moves.Length; i++)
+			{
+				if (moves[i] == "")
+					continue;
+
+				MoveToList(moves[i], i);
+			}
+
+			return true;
 		}
 
 		protected void DrawPieces()
@@ -148,9 +132,11 @@ namespace ChessWPF.UserControls
 			{
 				for (int j = 0; j < 8; j++)
 				{
-					Image img = new();
-					img.Source = GetImageSource(board.GetPiece(new Position(i, j)));
-					img.Width = 60;
+					Image img = new()
+					{
+                        Source = GetImageSource(board.GetPiece(new Position(i, j))),
+                        Width = 60
+                    };
 
 					BoardGrid.Children.Add(img);
 
@@ -299,14 +285,10 @@ namespace ChessWPF.UserControls
             if (Directory.Exists(Board.SaveFilePath))
 			{
 				if (File.Exists(gameStateFilePath))
-				{
 					File.Delete(gameStateFilePath);
-				}
 
 				if (File.Exists(movesFilePath))
-				{
 					File.Delete(movesFilePath);
-				}
 			}
 
 			HandleStat(info);
@@ -381,19 +363,18 @@ namespace ChessWPF.UserControls
 			{
 				Directory.CreateDirectory(Board.SaveFilePath);
 
-				using (StreamWriter sw = File.CreateText(gameStatFilePath))
-				{
-					int[] stats = { 0, 0, 0, 0, 0, 0, 0, 0 };
+				using StreamWriter sw = File.CreateText(gameStatFilePath);
 
-					if (info.Winner == null)
-						stats[2]++;
-					else
-						stats[winnerStatIndexes[info.Winner]]++;
+				int[] stats = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-					stats[reasonStatIndexes[info.Ending]]++;
+				if (info.Winner == null)
+					stats[2]++;
+				else
+					stats[winnerStatIndexes[info.Winner]]++;
 
-					sw.WriteLine(string.Join(" ", stats));
-				}
+				stats[reasonStatIndexes[info.Ending]]++;
+
+				sw.WriteLine(string.Join(" ", stats));
 			}
 		}
 
@@ -408,13 +389,13 @@ namespace ChessWPF.UserControls
 
 		protected void ClearOverlayGrid()
 		{
-			if (chosenPos != null)
-			{
-				possibleMovesOverlay[chosenPos.Rank, chosenPos.File].Fill = Brushes.Transparent;
-				chosenPos = null;
-				OverlayGrid.Children.Clear();
-				possibleMoves.Clear();
-			}
+			if (chosenPos == null)
+				return;
+
+			possibleMovesOverlay[chosenPos.Rank, chosenPos.File].Fill = Brushes.Transparent;
+			chosenPos = null;
+			OverlayGrid.Children.Clear();
+			possibleMoves.Clear();
 		}
 
 		public void ResetGame()
@@ -430,12 +411,12 @@ namespace ChessWPF.UserControls
 			MovesList.Items.Clear();
 			Moves = "";
 
-			if (!IsComputerEnabled)
-			{
-				TimerWhiteTextBlock.Text = "--:--";
-				TimerBlackTextBlock.Text = "--:--";
-				OverlayMenu.Content = new TimerUserControl(this);
-			}
+			if (IsComputerEnabled)
+				return;
+
+			TimerWhiteTextBlock.Text = "--:--";
+			TimerBlackTextBlock.Text = "--:--";
+			OverlayMenu.Content = new TimerUserControl(this);
 		}
 
 		protected void TimerReset()
@@ -533,48 +514,23 @@ namespace ChessWPF.UserControls
 			}
 			else
 			{
-				switch (move[0])
-				{
-					case 'p':
-						piece = new Pawn(PieceColor.Black);
-						break;
-					case 'r':
-						piece = new Rook(PieceColor.Black);
-						break;
-					case 'n':
-						piece = new Knight(PieceColor.Black);
-						break;
-					case 'b':
-						piece = new Bishop(PieceColor.Black);
-						break;
-					case 'q':
-						piece = new Queen(PieceColor.Black);
-						break;
-					case 'k':
-						piece = new King(PieceColor.Black);
-						break;
-					case 'P':
-						piece = new Pawn(PieceColor.White);
-						break;
-					case 'R':
-						piece = new Rook(PieceColor.White);
-						break;
-					case 'N':
-						piece = new Knight(PieceColor.White);
-						break;
-					case 'B':
-						piece = new Bishop(PieceColor.White);
-						break;
-					case 'Q':
-						piece = new Queen(PieceColor.White);
-						break;
-					case 'K':
-						piece = new King(PieceColor.White);
-						break;
-					default:
-						throw new Exception("Invalid piece");
-				}
-			}
+                piece = move[0] switch
+                {
+                    'p' => new Pawn(PieceColor.Black),
+                    'r' => new Rook(PieceColor.Black),
+                    'n' => new Knight(PieceColor.Black),
+                    'b' => new Bishop(PieceColor.Black),
+                    'q' => new Queen(PieceColor.Black),
+                    'k' => new King(PieceColor.Black),
+                    'P' => new Pawn(PieceColor.White),
+                    'R' => new Rook(PieceColor.White),
+                    'N' => new Knight(PieceColor.White),
+                    'B' => new Bishop(PieceColor.White),
+                    'Q' => new Queen(PieceColor.White),
+                    'K' => new King(PieceColor.White),
+                    _ => throw new Exception("Invalid piece"),
+                };
+            }
 
 			StackPanel stackPanel = new StackPanel();
 			TextBlock moveNumber = new TextBlock();
